@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ДЕМОНСТРАЦИОННЫЕ контакты организаций: номера и адреса не являются реальными. -->
+<contacts demo="true">
+  <org id="c1" kind="dispatch">
+    <name>Единая диспетчерская служба</name>
+    <phone>115</phone>
+    <hours>круглосуточно</hours>
+    <note>Приём обращений по вопросам ЖКХ и аварийным ситуациям</note>
+  </org>
+  <org id="c2" kind="water">
+    <name>Водоканал</name>
+    <phone>+375 17 000-00-01</phone>
+    <hours>пн–пт, 8:00–17:00</hours>
+    <note>Водоснабжение и водоотведение</note>
+  </org>
+  <org id="c3" kind="heat">
+    <name>Теплосеть района</name>
+    <phone>+375 17 000-00-02</phone>
+    <hours>пн–пт, 8:00–17:00</hours>
+    <note>Отопление и горячее водоснабжение</note>
+  </org>
+  <org id="c4" kind="power">
+    <name>Горэлектросеть</name>
+    <phone>+375 17 000-00-03</phone>
+    <hours>круглосуточно (аварийная служба)</hours>
+    <note>Электроснабжение</note>
+  </org>
+  <org id="c5" kind="management">
+    <name>Жилищно-эксплуатационная служба</name>
+    <phone>+375 17 000-00-04</phone>
+    <hours>пн–пт, 8:00–17:00</hours>
+    <note>Содержание жилья и благоустройство</note>
+  </org>
+</contacts>

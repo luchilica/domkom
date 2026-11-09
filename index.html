@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#274455">
+  <title>ДомПортал — городской портал коммунальных услуг</title>
+  <meta name="description" content="Заявки в службы ЖКХ, статус обращений, отключения на карте и тарифы — в одном месте, без лишних шагов.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&amp;display=swap">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <div class="container site-header__bar">
+      <a class="logo" href="index.html">
+        <img class="logo__mark-img" src="assets/logo.svg" width="44" height="44" alt="">
+        <span>
+          <span class="logo__name">ДомПортал</span>
+          <span class="logo__tag">коммунальные услуги города</span>
+        </span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-menu"></use></svg>
+      </button>
+      <nav class="nav" id="site-nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="index.html" aria-current="page">Главная</a></li>
+          <li><a class="nav__link" href="request.html">Подать заявку</a></li>
+          <li><a class="nav__link" href="requests.html">Мои заявки</a></li>
+          <li><a class="nav__link" href="outages.html">Отключения</a></li>
+          <li><a class="nav__link" href="tariffs.html">Тарифы</a></li>
+          <li class="nav__item--cabinet"><a class="nav__link" href="cabinet.html">Личный кабинет</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn--small site-header__cta" href="cabinet.html">Личный кабинет</a>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero__art" src="assets/city.svg" alt="" width="1440" height="320">
+      <div class="container hero__body">
+        <h1 class="display" id="hero-title">Коммунальные услуги <span class="hero__accent">без лишних шагов</span></h1>
+        <div class="hero__row">
+          <ul class="hero-chips">
+            <li><a href="request.html"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-clock"></use></svg>Заявка за одну минуту</a></li>
+            <li><a href="requests.html"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-check"></use></svg>Статус всегда на виду</a></li>
+            <li><a href="outages.html"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-pin"></use></svg>Карта отключений</a></li>
+          </ul>
+          <div class="hero__text">
+            <p class="lead on-dark">Подавайте заявки, следите за их статусом, узнавайте об отключениях и тарифах — с телефона или компьютера, без лишних переходов.</p>
+            <div class="hero__actions">
+              <a class="btn" href="request.html">Подать заявку</a>
+              <a class="btn btn--ghost" href="outages.html">Смотреть отключения</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--split" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="h2" id="services-title">Что можно сделать</h2>
+          <p class="lead muted">Четыре главных действия вынесены на первый экран: каждое занимает один–два перехода.</p>
+        </div>
+        <div class="auto-grid auto-grid--quad">
+        <article class="svc-card">
+          <div class="svc-card__art"><div class="svc-card__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-wrench"></use></svg></div></div>
+          <div class="svc-card__text">
+            <h3 class="h3">Подать заявку</h3>
+            <p class="svc-card__meta">около минуты на заполнение</p>
+            <p class="muted">Опишите проблему, укажите адрес и категорию — заявка сразу уйдёт в нужную службу.</p>
+          </div>
+          <a class="btn btn--block" href="request.html">Подать заявку</a>
+        </article>
+        <article class="svc-card">
+          <div class="svc-card__art"><div class="svc-card__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-pin"></use></svg></div></div>
+          <div class="svc-card__text">
+            <h3 class="h3">Посмотреть отключения</h3>
+            <p class="svc-card__meta">фильтр по услуге и району</p>
+            <p class="muted">Плановые и аварийные отключения воды, тепла и электричества — списком и на карте.</p>
+          </div>
+          <a class="btn btn--block" href="outages.html">Открыть карту</a>
+        </article>
+        <article class="svc-card">
+          <div class="svc-card__art"><div class="svc-card__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-tag"></use></svg></div></div>
+          <div class="svc-card__text">
+            <h3 class="h3">Узнать тарифы</h3>
+            <p class="svc-card__meta">вода, тепло, содержание жилья</p>
+            <p class="muted">Тарифы на коммунальные услуги, порядок передачи показаний и контакты организаций.</p>
+          </div>
+          <a class="btn btn--block" href="tariffs.html">Смотреть тарифы</a>
+        </article>
+        <article class="svc-card">
+          <div class="svc-card__art"><div class="svc-card__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-user"></use></svg></div></div>
+          <div class="svc-card__text">
+            <h3 class="h3">Личный кабинет</h3>
+            <p class="svc-card__meta">адреса и история заявок</p>
+            <p class="muted">Сохранённые адреса, история обращений со статусами и отключения рядом с вашим домом.</p>
+          </div>
+          <a class="btn btn--block" href="cabinet.html">Открыть кабинет</a>
+        </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--panel" aria-labelledby="ref-title">
+      <div class="container">
+        <h2 class="h2 section__title-center" id="ref-title">Справочник и сервисы</h2>
+        <div class="auto-grid">
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Тарифы</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-tag"></use></svg></div>
+          <p>Актуальные тарифы на воду, отопление, содержание жилья — в таблице.</p>
+        </article>
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Передача показаний</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-gauge"></use></svg></div>
+          <p>Как и когда передать показания приборов учёта, в том числе через ЕРИП.</p>
+        </article>
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Контакты служб</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-phone"></use></svg></div>
+          <p>Телефоны диспетчерских и организаций ЖКХ, графики работы.</p>
+        </article>
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Новости и работы</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-news"></use></svg></div>
+          <p>Плановые работы и объявления организаций, которые касаются вашего дома.</p>
+        </article>
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Документы и правила</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-doc"></use></svg></div>
+          <p>Сроки оплаты, порядок обращений и полезные пояснения для жителей.</p>
+        </article>
+        <article class="ref-card">
+          <div class="ref-card__top"><h3 class="h4">Мои адреса</h3><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-home"></use></svg></div>
+          <p>Сохранённые адреса в личном кабинете — для заявок и персональных отключений.</p>
+        </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--panel section--flush-top" aria-labelledby="about-title">
+      <div class="container about">
+        <div class="about__text">
+          <h2 class="h2" id="about-title">Немного о портале</h2>
+          <p class="lead on-dark">Портал собирает всё, что нужно жителю, на одном сайте: заявки, отключения, тарифы и справку. Мы убрали лишнее и вынесли главное на первый экран — так удобно и молодым, и людям старшего поколения.</p>
+          <a href="#faq" class="btn btn--ghost">Частые вопросы</a>
+        </div>
+        <ul class="stats">
+          <li><span class="stats__num">1–2</span><span class="stats__label">шага до ключевого действия</span></li>
+          <li><span class="stats__num">4</span><span class="stats__label">статуса у каждой заявки</span></li>
+          <li><span class="stats__num">6</span><span class="stats__label">страниц портала</span></li>
+          <li><span class="stats__num">24/7</span><span class="stats__label">доступ к сервисам</span></li>
+          <li><span class="stats__num">AA</span><span class="stats__label">контраст по WCAG 2.2</span></li>
+          <li><span class="stats__num">XML</span><span class="stats__label">единое хранилище данных</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="marquee" role="group" aria-label="Принципы портала">
+      <div class="marquee__track">
+        <div class="marquee__group"><span>Простота</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-check"></use></svg><span>Прозрачность</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-eye"></use></svg><span>Доступность</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-user"></use></svg><span>Скорость</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-clock"></use></svg></div>
+        <div class="marquee__group" aria-hidden="true"><span>Простота</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-check"></use></svg><span>Прозрачность</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-eye"></use></svg><span>Доступность</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-user"></use></svg><span>Скорость</span><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-clock"></use></svg></div>
+      </div>
+    </div>
+
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container split">
+        <div class="stack">
+          <h2 class="h2" id="faq-title">Частые вопросы</h2>
+          <div class="faq">
+          <details open>
+            <summary>Как подать заявку на устранение неисправности?</summary>
+            <p>Выберите категорию, укажите адрес и опишите проблему. После отправки вы получите номер заявки и сможете следить за её статусом.</p>
+          </details>
+          <details>
+            <summary>Что означают статусы заявки?</summary>
+            <p>«Принята» — заявка зарегистрирована, «В работе» — служба приступила к устранению, «Выполнена» — работы завершены, «Отклонена» — обращение не относится к компетенции служб ЖКХ (причина указывается).</p>
+          </details>
+          <details>
+            <summary>Как узнать об отключении на моём адресе?</summary>
+            <p>Откройте страницу «Отключения»: список и карта фильтруются по услуге и району. В личном кабинете показываются отключения рядом с вашим домом.</p>
+          </details>
+          <details>
+            <summary>Нужна ли регистрация, чтобы подать заявку?</summary>
+            <p>Для подачи заявки достаточно заполнить форму. Личный кабинет нужен, чтобы хранить адреса и видеть историю обращений. В учебной версии вход имитируется данными из XML.</p>
+          </details>
+          <details>
+            <summary>Где посмотреть тарифы и как передать показания?</summary>
+            <p>Тарифы собраны на странице «Тарифы». Показания можно передать через ЕРИП — порядок описан на той же странице.</p>
+          </details>
+          <details>
+            <summary>Как связаться с диспетчерской службой?</summary>
+            <p>Контакты указаны внизу страницы и на странице «Тарифы». Для срочных аварий используйте единый номер диспетчерской 115.</p>
+          </details>
+          </div>
+        </div>
+        <div class="stack">
+          <form class="panel-card form" data-request-form novalidate aria-labelledby="quick-title">
+            <h2 class="h3" id="quick-title">Быстрая заявка</h2>
+            <p class="muted">Оставьте обращение — номер заявки появится сразу после отправки.</p>
+            <div class="field" data-field="category">
+              <label class="field__label" for="q-category">Категория</label>
+              <select class="field__control" id="q-category" name="category"><option value="">Выберите из списка</option><option value="water">Водоснабжение</option><option value="heating">Отопление</option><option value="power">Электроснабжение</option><option value="yard">Благоустройство</option><option value="other">Другое</option></select>
+            </div>
+            <div class="field" data-field="address">
+              <label class="field__label" for="q-address">Адрес</label>
+              <input class="field__control" id="q-address" name="address" type="text" autocomplete="street-address" placeholder="Улица, дом, квартира">
+            </div>
+            <div class="field" data-field="phone">
+              <label class="field__label" for="q-phone">Телефон для связи</label>
+              <input class="field__control" id="q-phone" name="phone" type="tel" autocomplete="tel" placeholder="+375 29 000-00-00">
+            </div>
+            <div class="field" data-field="description">
+              <label class="field__label" for="q-description">Что случилось</label>
+              <textarea class="field__control" id="q-description" name="description" placeholder="Опишите проблему"></textarea>
+            </div>
+            <div class="field" data-field="consent">
+            <label class="check"><input type="checkbox" name="consent" value="yes"><span>Согласен на обработку персональных данных</span></label>
+          </div>
+            <button class="btn btn--block" type="submit">Отправить заявку</button>
+          </form>
+          <div class="confirm" data-confirm hidden tabindex="-1" role="status">
+            <div class="confirm__ring"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-check"></use></svg></div>
+            <h2 class="h3">Заявка № <span data-confirm-id></span> принята</h2>
+            <p class="on-dark">Служба получит заявку и возьмёт её в работу: статус сменится на «В работе», а по завершении — на «Выполнена» или «Отклонена». Следите за ним на странице «Мои заявки».</p>
+            <a class="btn btn--ghost" href="requests.html">Перейти к заявкам</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--flush-top" aria-labelledby="why-title">
+      <div class="container">
+        <h2 class="h2 section__title-center section__title-center--tall" id="why-title">Почему здесь проще</h2>
+        <div class="benefits">
+        <div class="benefits__item">
+          <div class="benefits__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-check"></use></svg></div>
+          <h3 class="h4">Главное — сразу</h3>
+          <p class="on-dark">Крупные кнопки основных действий на первом экране, удобные для пальца и мыши.</p>
+        </div>
+        <div class="benefits__item">
+          <div class="benefits__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-clock"></use></svg></div>
+          <h3 class="h4">Понятный статус</h3>
+          <p class="on-dark">Видно, на каком этапе заявка: принята, в работе, выполнена или отклонена.</p>
+        </div>
+        <div class="benefits__item">
+          <div class="benefits__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-eye"></use></svg></div>
+          <h3 class="h4">Для любого возраста</h3>
+          <p class="on-dark">Крупный шрифт, высокий контраст и простые подписи без жаргона.</p>
+        </div>
+        <div class="benefits__item">
+          <div class="benefits__ring"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-layers"></use></svg></div>
+          <h3 class="h4">Всё в одном месте</h3>
+          <p class="on-dark">Заявки, отключения, тарифы и контакты — без поиска по разным сайтам.</p>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--flush-top" aria-labelledby="now-title">
+      <div class="container stack stack--lg">
+        <div class="section__head">
+          <h2 class="h2" id="now-title">Сейчас в городе</h2>
+          <p class="lead muted">Демонстрационные данные из XML — так будет выглядеть актуальный список.</p>
+        </div>
+        <div class="auto-grid" id="home-outages" aria-live="polite"><p class="loading">Загрузка…</p></div>
+        <div><a class="btn" href="outages.html">Все отключения и карта</a></div>
+      </div>
+    </section>
+
+    <section class="section section--flush-top" aria-labelledby="news-title">
+      <div class="container stack stack--lg">
+        <div class="section__head">
+          <h2 class="h2" id="news-title">Новости и объявления</h2>
+          <p class="lead muted">Плановые работы и сообщения организаций, которые касаются вашего дома.</p>
+        </div>
+        <div class="auto-grid" id="home-news" aria-live="polite"><p class="loading">Загрузка…</p></div>
+      </div>
+    </section>
+
+    <section class="section section--flush-top" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="contact">
+          <div class="map"><svg viewBox="0 0 1152 300" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Схема расположения офиса"><rect width="1152" height="300" fill="#DCE6EC"/><path d="M0 210C300 170 520 260 800 200S1100 150 1152 170" stroke="#9FC3D8" stroke-width="34" fill="none"/><rect x="40" y="30" width="180" height="110" rx="10" fill="#C5D4DD"/><rect x="250" y="30" width="150" height="80" rx="10" fill="#C5D4DD"/><rect x="430" y="40" width="210" height="90" rx="10" fill="#C5D4DD"/><rect x="680" y="20" width="160" height="120" rx="10" fill="#C5D4DD"/><rect x="880" y="40" width="220" height="100" rx="10" fill="#C5D4DD"/><rect x="60" y="170" width="150" height="100" rx="10" fill="#C5D4DD"/><rect x="260" y="220" width="130" height="60" rx="10" fill="#C5D4DD"/><rect x="460" y="200" width="170" height="80" rx="10" fill="#C5D4DD"/><rect x="860" y="230" width="120" height="60" rx="10" fill="#C5D4DD"/><rect x="1010" y="200" width="100" height="80" rx="10" fill="#C5D4DD"/><path d="M0 150H1152M240 0V300M420 0V300M660 0V300M1000 0V300" stroke="#FFFFFF" stroke-width="12" fill="none"/><circle cx="640" cy="120" r="18" fill="#274455"/><circle cx="640" cy="120" r="7" fill="#C2DB64"/></svg></div>
+          <div class="contact__row">
+            <h2 class="h2" id="contact-title">Свяжитесь с нами</h2>
+            <a class="btn" href="request.html">Подать заявку</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div>
+        <a class="logo" href="index.html">
+          <img src="assets/logo.svg" width="44" height="44" alt="">
+          <span class="logo__name">ДомПортал</span>
+        </a>
+        <p class="site-footer__note">© 2026 Городской портал коммунальных услуг.<br>Учебный проект · Колледж ИКТ БГАС, гр. ВР311</p>
+      </div>
+      <div>
+        <h2>Свяжитесь с нами</h2>
+        <ul>
+          <li><a href="tel:+375170000000">+375 (17) 000-00-00</a></li>
+          <li><a href="mailto:info@domportal.example">info@domportal.example</a></li>
+          <li>г. Минск, ул. Примерная, 1</li>
+        </ul>
+      </div>
+      <nav aria-label="Разделы сайта">
+        <h2>Разделы</h2>
+        <ul>
+          <li><a href="request.html">Подать заявку</a></li>
+          <li><a href="requests.html">Мои заявки</a></li>
+          <li><a href="outages.html">Отключения</a></li>
+          <li><a href="tariffs.html">Тарифы</a></li>
+          <li><a href="cabinet.html">Личный кабинет</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Демонстрационные заявки. status: new | work | done | rejected -->
+<requests>
+  <request id="2026-0412" status="new">
+    <created>2026-11-08T08:12</created>
+    <category>water</category>
+    <address>ул. Примерная, 12, кв. 34</address>
+    <description>Нет холодной воды в квартире</description>
+    <events>
+      <event at="2026-11-08T08:12" status="new">Заявка принята</event>
+    </events>
+  </request>
+  <request id="2026-0398" status="work">
+    <created>2026-11-05T08:12</created>
+    <category>heating</category>
+    <address>ул. Примерная, 12, кв. 34</address>
+    <description>Холодные батареи в подъезде</description>
+    <events>
+      <event at="2026-11-05T08:12" status="new">Заявка принята</event>
+      <event at="2026-11-05T08:20" status="new">Передана в службу</event>
+      <event at="2026-11-05T09:05" status="work">Взята в работу</event>
+    </events>
+  </request>
+  <request id="2026-0371" status="done">
+    <created>2026-10-29T18:40</created>
+    <category>yard</category>
+    <address>ул. Примерная, 12</address>
+    <description>Не горит фонарь у входа</description>
+    <events>
+      <event at="2026-10-29T18:40" status="new">Заявка принята</event>
+      <event at="2026-10-30T10:00" status="work">Взята в работу</event>
+      <event at="2026-10-31T12:30" status="done">Фонарь заменён</event>
+    </events>
+  </request>
+  <request id="2026-0344" status="done">
+    <created>2026-10-21T20:05</created>
+    <category>power</category>
+    <address>ул. Примерная, 12, кв. 34</address>
+    <description>Мигает свет на лестнице</description>
+    <events>
+      <event at="2026-10-21T20:05" status="new">Заявка принята</event>
+      <event at="2026-10-22T09:10" status="work">Взята в работу</event>
+      <event at="2026-10-23T11:00" status="done">Неисправность устранена</event>
+    </events>
+  </request>
+  <request id="2026-0310" status="rejected">
+    <created>2026-10-12T13:15</created>
+    <category>other</category>
+    <address>ул. Примерная, 12, кв. 34</address>
+    <description>Вопрос не относится к ЖКХ</description>
+    <events>
+      <event at="2026-10-12T13:15" status="new">Заявка принята</event>
+      <event at="2026-10-13T09:00" status="rejected">Отклонена: обращение не входит в компетенцию служб ЖКХ</event>
+    </events>
+  </request>
+</requests>

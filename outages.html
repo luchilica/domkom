@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#274455">
+  <title>Отключения и карта — ДомПортал</title>
+  <meta name="description" content="Плановые и аварийные отключения воды, тепла и электричества: список, карта и фильтры.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&amp;display=swap">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body data-page="outages">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <div class="container site-header__bar">
+      <a class="logo" href="index.html">
+        <img class="logo__mark-img" src="assets/logo.svg" width="44" height="44" alt="">
+        <span>
+          <span class="logo__name">ДомПортал</span>
+          <span class="logo__tag">коммунальные услуги города</span>
+        </span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-menu"></use></svg>
+      </button>
+      <nav class="nav" id="site-nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="index.html">Главная</a></li>
+          <li><a class="nav__link" href="request.html">Подать заявку</a></li>
+          <li><a class="nav__link" href="requests.html">Мои заявки</a></li>
+          <li><a class="nav__link" href="outages.html" aria-current="page">Отключения</a></li>
+          <li><a class="nav__link" href="tariffs.html">Тарифы</a></li>
+          <li class="nav__item--cabinet"><a class="nav__link" href="cabinet.html">Личный кабинет</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn--small site-header__cta" href="cabinet.html">Личный кабинет</a>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <div class="page-band">
+      <div class="container page-title">
+        <h1 class="h2">Отключения и карта</h1>
+        <p class="lead on-dark">Плановые и аварийные отключения — списком и на карте. Выберите элемент, чтобы увидеть подробности.</p>
+      </div>
+    </div>
+    <div class="section">
+      <div class="container stack stack--lg">
+        <div class="chips">
+          <div class="chips" role="group" aria-label="Фильтр по услуге"><span class="filter-label">Услуга:</span><button class="chip" type="button" data-filter="service" data-value="all" aria-pressed="true">Все</button><button class="chip" type="button" data-filter="service" data-value="water" aria-pressed="false">Вода</button><button class="chip" type="button" data-filter="service" data-value="heat" aria-pressed="false">Тепло</button><button class="chip" type="button" data-filter="service" data-value="power" aria-pressed="false">Электричество</button></div>
+          <div class="chips" role="group" aria-label="Фильтр по району"><span class="filter-label">Район:</span><button class="chip" type="button" data-filter="district" data-value="all" aria-pressed="true">Все</button><button class="chip" type="button" data-filter="district" data-value="central" aria-pressed="false">Центральный</button><button class="chip" type="button" data-filter="district" data-value="north" aria-pressed="false">Северный</button></div>
+        </div>
+        <p class="muted" id="outage-count" aria-live="polite"></p>
+        <div class="split split--map">
+          <ul class="outage-list" id="outage-list"><li class="loading">Загрузка…</li></ul>
+          <div class="stack">
+            <div class="map"><svg viewBox="0 0 648 640" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Карта отключений"><rect width="648" height="640" fill="#DCE6EC"/><path d="M0 470C160 410 300 520 460 450S600 380 648 400" stroke="#9FC3D8" stroke-width="40" fill="none"/><rect x="30" y="30" width="160" height="120" rx="10" fill="#C5D4DD"/><rect x="220" y="30" width="130" height="90" rx="10" fill="#C5D4DD"/><rect x="380" y="40" width="210" height="110" rx="10" fill="#C5D4DD"/><rect x="30" y="190" width="120" height="120" rx="10" fill="#C5D4DD"/><rect x="180" y="170" width="160" height="110" rx="10" fill="#C5D4DD"/><rect x="380" y="190" width="100" height="120" rx="10" fill="#C5D4DD"/><rect x="510" y="190" width="110" height="110" rx="10" fill="#C5D4DD"/><rect x="40" y="340" width="150" height="60" rx="10" fill="#C5D4DD"/><rect x="230" y="320" width="130" height="70" rx="10" fill="#C5D4DD"/><rect x="400" y="330" width="200" height="50" rx="10" fill="#C5D4DD"/><rect x="60" y="540" width="160" height="70" rx="10" fill="#C5D4DD"/><rect x="420" y="550" width="180" height="60" rx="10" fill="#C5D4DD"/><path d="M0 165H648M0 315H648M200 0V640M360 0V640M500 0V640" stroke="#FFFFFF" stroke-width="12" fill="none"/><g id="map-layer"></g></svg></div>
+            <div class="details" id="outage-details" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div>
+        <a class="logo" href="index.html">
+          <img src="assets/logo.svg" width="44" height="44" alt="">
+          <span class="logo__name">ДомПортал</span>
+        </a>
+        <p class="site-footer__note">© 2026 Городской портал коммунальных услуг.<br>Учебный проект · Колледж ИКТ БГАС, гр. ВР311</p>
+      </div>
+      <div>
+        <h2>Свяжитесь с нами</h2>
+        <ul>
+          <li><a href="tel:+375170000000">+375 (17) 000-00-00</a></li>
+          <li><a href="mailto:info@domportal.example">info@domportal.example</a></li>
+          <li>г. Минск, ул. Примерная, 1</li>
+        </ul>
+      </div>
+      <nav aria-label="Разделы сайта">
+        <h2>Разделы</h2>
+        <ul>
+          <li><a href="request.html">Подать заявку</a></li>
+          <li><a href="requests.html">Мои заявки</a></li>
+          <li><a href="outages.html">Отключения</a></li>
+          <li><a href="tariffs.html">Тарифы</a></li>
+          <li><a href="cabinet.html">Личный кабинет</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

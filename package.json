@@ -1,0 +1,12 @@
+{
+  "name": "domportal",
+  "version": "1.0.0",
+  "description": "Городской портал коммунальных услуг — учебный проект",
+  "private": true,
+  "scripts": {
+    "build": "sass scss/main.scss css/main.css --style=expanded --no-source-map",
+    "build:fallback": "node build-css.mjs",
+    "start": "npx serve . -l 5173"
+  },
+  "devDependencies": { "sass": "^1.80.0" }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Демонстрационные данные об отключениях. type: emergency | planned; service: water | heat | power -->
+<outages updated="2026-11-08T14:00:00+03:00">
+  <outage id="o1" type="emergency" service="water" district="central">
+    <title>Нет холодной воды</title>
+    <address>ул. Примерная, 12–18</address>
+    <period from="2026-11-08T08:40" to="2026-11-08T16:00"/>
+    <reason>Повреждение магистрали</reason>
+    <map x="270" y="110" r="64"/>
+  </outage>
+  <outage id="o2" type="planned" service="heat" district="north">
+    <title>Отключение горячей воды</title>
+    <address>пр-т Образцовый, 5–21</address>
+    <period from="2026-11-12T09:00" to="2026-11-14T18:00"/>
+    <reason>Профилактические работы</reason>
+    <map x="560" y="250" r="54"/>
+  </outage>
+  <outage id="o3" type="emergency" service="power" district="central">
+    <title>Нет электричества</title>
+    <address>ул. Тестовая, 3–9</address>
+    <period from="2026-11-08T10:15" to=""/>
+    <reason>Повреждение кабеля</reason>
+    <map x="110" y="260" r="48"/>
+  </outage>
+  <outage id="o4" type="planned" service="heat" district="north">
+    <title>Подготовка отопления</title>
+    <address>ул. Школьная, 1–11</address>
+    <period from="2026-11-15T09:00" to="2026-11-15T17:00"/>
+    <reason>Промывка системы</reason>
+    <map x="470" y="520" r="46"/>
+  </outage>
+</outages>

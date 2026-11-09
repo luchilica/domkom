@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ДЕМОНСТРАЦИОННЫЕ значения тарифов: не являются официальными данными. -->
+<tariffs currency="BYN" demo="true">
+  <tariff id="t1">
+    <service>Холодное водоснабжение</service>
+    <unit>м³</unit>
+    <price>1,25</price>
+    <note>Для потребителей с приборами учёта</note>
+  </tariff>
+  <tariff id="t2">
+    <service>Водоотведение</service>
+    <unit>м³</unit>
+    <price>0,98</price>
+    <note>Начисляется вместе с водой</note>
+  </tariff>
+  <tariff id="t3">
+    <service>Горячее водоснабжение</service>
+    <unit>м³</unit>
+    <price>4,70</price>
+    <note>Включает подогрев</note>
+  </tariff>
+  <tariff id="t4">
+    <service>Отопление</service>
+    <unit>Гкал</unit>
+    <price>52,40</price>
+    <note>Отопительный сезон</note>
+  </tariff>
+  <tariff id="t5">
+    <service>Электроэнергия</service>
+    <unit>кВт·ч</unit>
+    <price>0,21</price>
+    <note>Базовый тариф</note>
+  </tariff>
+  <tariff id="t6">
+    <service>Содержание жилья</service>
+    <unit>м² / мес.</unit>
+    <price>0,35</price>
+    <note>Для многоквартирных домов</note>
+  </tariff>
+</tariffs>

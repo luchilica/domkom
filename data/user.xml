@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Имитация авторизации (учебный проект): демо-логин и пароль хранятся открыто, реальной защиты нет. -->
+<user id="demo" login="demo" password="demo2026">
+  <name>Анна Иванова</name>
+  <initials>АИ</initials>
+  <phone>+375 29 000-00-00</phone>
+  <addresses>
+    <address id="a1" primary="true" street="ул. Примерная" house="12" flat="34">Основной</address>
+    <address id="a2" primary="false" street="пр-т Образцовый" house="7" flat="2">Родители</address>
+  </addresses>
+</user>

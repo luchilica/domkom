@@ -1,0 +1,1645 @@
+// ДомПортал — стили. Источник SCSS, компилируется в css/main.css.
+// Используются: переменные, вложенность, миксины, медиазапросы (mobile-first).
+
+// ---------- Токены ----------
+$ink: #274455;
+$deep: #1B3342;
+$panel: #3B5F78;
+$card: #476B84;
+$lime: #C2DB64;
+$lime-press: #A9C444;
+$lime-ink: #5C7A12; // зелёный текст на светлом фоне (4.9:1), вместо лаймового из скриншота
+$canvas: #F3F6F8;
+$surface: #FFFFFF;
+$muted: #5A7180;
+$line: #D5E0E6;
+$on-dark: #C9D8E1;
+$link: #1D5F8A;
+$st-new: #2A74A3;
+$st-work: #F2C14E;
+$st-done: #2F7A4A;
+$st-rej: #B8412F;
+$focus: #0B6BCB;
+$font: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+$bp-sm: 600px;
+$bp-md: 900px;
+$bp-lg: 1180px;
+$r-sm: 10px;
+$r-md: 16px;
+$r-lg: 28px;
+$t-fast: 200ms;   // motion.duration.instant
+$t-normal: 300ms; // motion.duration.fast
+$t-slow: 600ms;   // motion.duration.normal
+
+// Типографика (DESIGN.md: font.size.*, база 18px)
+$fs-sm: 0.8125rem;   // 13px
+$fs-md: 0.875rem;    // 14px
+$fs-lg: 1rem;        // 16px
+$fs-xl: 1.125rem;    // 18px (база)
+$fs-2xl: 1.25rem;    // 20px
+$fs-3xl: 1.375rem;   // 22px
+$fs-4xl: 3.84rem;    // 61.44px
+
+// Тени (DESIGN.md: shadow.1–3)
+$shadow-1: rgba(39, 68, 85, 0.1) 0 0 0 1px;
+$shadow-2: rgba(0, 0, 0, 0.3) 0 1px 2px 0;
+$shadow-3: inset rgba(0, 0, 0, 0.4) 0 1px 2px 0;
+
+// ---------- Миксины ----------
+@mixin focus-ring {
+  outline: 3px solid $focus;
+  outline-offset: 3px;
+}
+
+@mixin card-surface {
+  background: $surface;
+  border-radius: $r-lg;
+  box-shadow: $shadow-1;
+}
+
+@mixin pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 250px;
+}
+
+// ---------- База ----------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: $font;
+  font-size: $fs-xl;
+  line-height: 1.55;
+  color: $ink;
+  background: $canvas;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: $link;
+  text-underline-offset: 3px;
+
+  &:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  @include focus-ring;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: $lime;
+  color: $ink;
+  border-radius: $r-sm;
+  font-weight: 600;
+
+  &:focus {
+    top: 16px;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  @media (min-width: $bp-md) {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  @media (min-width: $bp-lg) {
+    padding-left: 120px;
+    padding-right: 120px;
+  }
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &--lg {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  &--xl {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+// ---------- Типографика ----------
+.display {
+  font-size: clamp(2.25rem, 7.2vw, $fs-4xl);
+  line-height: 1.08;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.h2 {
+  font-size: clamp(1.75rem, 4.4vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 700;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.h3 {
+  font-size: $fs-3xl;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.h4 {
+  font-size: $fs-2xl;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.lead {
+  font-size: $fs-2xl;
+  line-height: 1.6;
+}
+
+.muted {
+  color: $muted;
+}
+
+.on-dark {
+  color: $on-dark;
+}
+
+// ---------- Кнопки и чипы ----------
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 28px;
+  border: 2px solid transparent;
+  border-radius: $r-sm;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  background: $lime;
+  color: $ink;
+  transition: background-color $t-fast ease, color $t-fast ease, border-color $t-fast ease;
+
+  &:hover {
+    background: $lime-press;
+  }
+
+  &:active {
+    background: $lime-press;
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $surface;
+    border-color: $surface;
+
+    &:hover {
+      background: $surface;
+      color: $ink;
+    }
+  }
+
+  &--dark {
+    background: $ink;
+    color: $surface;
+
+    &:hover {
+      background: $deep;
+    }
+  }
+
+  &--small {
+    min-height: 44px;
+    padding: 8px 20px;
+    font-size: 1rem;
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &[disabled],
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &[aria-busy='true'] {
+    cursor: progress;
+    opacity: 0.8;
+  }
+}
+
+.chip {
+  @include pill;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1.5px solid $line;
+  background: $surface;
+  color: $ink;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color $t-fast ease, color $t-fast ease;
+
+  &:hover {
+    border-color: $ink;
+  }
+
+  &:active {
+    background: $line;
+  }
+
+  &[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &[aria-pressed='true'] {
+    background: $ink;
+    border-color: $ink;
+    color: $surface;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $muted;
+}
+
+.status {
+  @include pill;
+  padding: 4px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  background: $line;
+  color: $ink;
+
+  &[data-status='new'] {
+    background: $st-new;
+    color: $surface;
+  }
+
+  &[data-status='work'],
+  &[data-status='planned'] {
+    background: $st-work;
+    color: $ink;
+  }
+
+  &[data-status='done'] {
+    background: $st-done;
+    color: $surface;
+  }
+
+  &[data-status='rejected'],
+  &[data-status='emergency'] {
+    background: $st-rej;
+    color: $surface;
+  }
+}
+
+// ---------- Шапка ----------
+.site-header {
+  position: relative;
+  z-index: 10;
+  background: $ink;
+  color: $surface;
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  &__cta {
+    display: none;
+
+    @media (min-width: $bp-lg) {
+      display: inline-flex;
+    }
+  }
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: $surface;
+  text-decoration: none;
+
+  &__mark {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: $lime;
+    color: $ink;
+  }
+
+  &__name {
+    display: block;
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  &__tag {
+    display: none;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: $on-dark;
+
+    @media (min-width: $bp-sm) {
+      display: block;
+    }
+  }
+}
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid $on-dark;
+  border-radius: $r-sm;
+  background: transparent;
+  color: $surface;
+  cursor: pointer;
+
+  @media (min-width: $bp-lg) {
+    display: none;
+  }
+}
+
+.nav {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 8px 16px 24px;
+  background: $ink;
+  border-top: 1px solid $card;
+
+  &[data-open='true'] {
+    display: block;
+  }
+
+  &__list {
+    display: grid;
+    gap: 4px;
+  }
+
+  &__link {
+    display: block;
+    padding: 12px 8px;
+    color: $surface;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $lime;
+    }
+
+    &[aria-current='page'] {
+      color: $lime;
+    }
+  }
+
+  @media (min-width: $bp-lg) {
+    display: block;
+    position: static;
+    padding: 0;
+    background: transparent;
+    border: 0;
+
+    &__list {
+      display: flex;
+      gap: 32px;
+    }
+
+    &__link {
+      padding: 8px 0;
+    }
+  }
+}
+
+// ---------- Hero ----------
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: $ink;
+  color: $surface;
+  padding-bottom: 180px;
+
+  &__art {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: left bottom;
+    pointer-events: none;
+  }
+
+  &__body {
+    position: relative;
+    display: grid;
+    gap: 32px;
+    padding-top: 40px;
+  }
+
+  &__accent {
+    display: block;
+    color: $lime;
+
+    @media (min-width: $bp-md) {
+      text-align: right;
+    }
+  }
+
+  &__row {
+    display: grid;
+    gap: 28px;
+
+    @media (min-width: $bp-md) {
+      grid-template-columns: 1fr minmax(0, 480px);
+      align-items: end;
+    }
+  }
+
+  &__text {
+    display: grid;
+    gap: 24px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  @media (min-width: $bp-md) {
+    padding-bottom: 240px;
+
+    &__art {
+      height: 300px;
+    }
+  }
+}
+
+.hero-chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  li {
+    @include pill;
+    gap: 10px;
+    padding: 10px 18px 10px 14px;
+    background: $panel;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .icon {
+    color: $lime;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+// ---------- Секции ----------
+.section {
+  padding-top: 56px;
+  padding-bottom: 56px;
+
+  @media (min-width: $bp-md) {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  &--panel {
+    background: $panel url('../assets/waves.svg') center / cover no-repeat;
+    color: $surface;
+  }
+
+  // Карточки пересекают границу светлой и тёмной секций (как на скриншоте)
+  &--split {
+    background: linear-gradient(to bottom, $canvas calc(100% - 220px), $panel calc(100% - 220px));
+  }
+
+  &--flush-top {
+    padding-top: 0;
+  }
+
+  &__head {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 32px;
+
+    @media (min-width: $bp-md) {
+      grid-template-columns: 1fr minmax(0, 420px);
+      align-items: center;
+      margin-bottom: 48px;
+    }
+  }
+
+  &__title-center {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+}
+
+.auto-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+}
+
+.svc-card {
+  @include card-surface;
+  display: grid;
+  gap: 20px;
+  grid-template-rows: auto 1fr auto;
+  padding: 16px 16px 24px;
+
+  &__art {
+    display: grid;
+    place-items: center;
+    min-height: 170px;
+    border-radius: 20px;
+    background: $ink;
+  }
+
+  &__ring {
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: $panel;
+    color: $lime;
+  }
+
+  &__text {
+    display: grid;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  &__meta {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $lime-ink;
+  }
+}
+
+.ref-card {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 28px;
+  border-radius: 20px;
+  background: $card;
+  color: $surface;
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: $surface;
+  }
+
+  .icon {
+    color: $lime;
+  }
+}
+
+// ---------- О портале ----------
+.about {
+  display: grid;
+  gap: 40px;
+  align-items: center;
+
+  @media (min-width: $bp-md) {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  &__text {
+    display: grid;
+    gap: 24px;
+  }
+}
+
+.stats {
+  display: grid;
+  gap: 32px 24px;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (min-width: $bp-sm) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__num {
+    display: block;
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    line-height: 1.05;
+    font-weight: 600;
+    color: $lime;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: $on-dark;
+  }
+}
+
+// ---------- Бегущая строка ----------
+.marquee {
+  overflow: hidden;
+  background: $lime;
+  color: $ink;
+  padding: 24px 0;
+
+  &__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+  }
+
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding-right: 48px;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    &__group[aria-hidden='true'] {
+      display: none;
+    }
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+// ---------- FAQ + форма ----------
+.split {
+  display: grid;
+  gap: 40px;
+  align-items: start;
+
+  @media (min-width: $bp-md) {
+    grid-template-columns: 1fr 440px;
+    gap: 48px;
+  }
+
+  &--wide {
+    @media (min-width: $bp-md) {
+      grid-template-columns: 1fr minmax(0, 520px);
+    }
+  }
+
+  &--sidebar {
+    @media (min-width: $bp-md) {
+      grid-template-columns: minmax(0, 1fr) 340px;
+    }
+  }
+
+  &--map {
+    @media (min-width: $bp-md) {
+      grid-template-columns: 420px minmax(0, 1fr);
+    }
+  }
+
+  &--cabinet {
+    @media (min-width: $bp-md) {
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
+  }
+}
+
+.faq {
+  details {
+    border-bottom: 1px solid $line;
+
+    &:first-child {
+      border-top: 1px solid $line;
+    }
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::after {
+      content: '+';
+      flex: none;
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1;
+    }
+  }
+
+  details[open] summary::after {
+    content: '\2013';
+  }
+
+  p {
+    padding: 0 0 20px;
+    color: $muted;
+  }
+}
+
+.panel-card {
+  @include card-surface;
+  padding: 24px;
+
+  @media (min-width: $bp-sm) {
+    padding: 32px;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__control {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1.5px solid $line;
+    border-radius: $r-sm;
+    background: $canvas;
+    font: inherit;
+    color: $ink;
+
+    &::placeholder {
+      color: $muted;
+    }
+
+    box-shadow: $shadow-3;
+
+    &:hover {
+      border-color: $muted;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea.field__control {
+    min-height: 110px;
+    resize: vertical;
+  }
+
+  &__error {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $st-rej;
+  }
+
+  &--error &__control {
+    border-color: $st-rej;
+    background: #FBEDEA;
+  }
+}
+
+.fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    padding: 0;
+    margin-bottom: 4px;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  label {
+    @include pill;
+    min-height: 44px;
+    padding: 8px 18px;
+    border: 1.5px solid $line;
+    background: $surface;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color $t-fast ease, color $t-fast ease;
+
+    &:hover {
+      border-color: $ink;
+    }
+  }
+
+  input:checked + label {
+    background: $ink;
+    border-color: $ink;
+    color: $surface;
+  }
+
+  input:focus-visible + label {
+    @include focus-ring;
+  }
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: $muted;
+
+  input {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin: 2px 0 0;
+    accent-color: $ink;
+  }
+}
+
+.confirm {
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  border-radius: $r-lg;
+  background: $panel;
+  color: $surface;
+
+  &__ring {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $lime;
+    color: $ink;
+  }
+}
+
+.steps {
+  display: grid;
+  gap: 20px;
+
+  li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  &__n {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $lime;
+    font-weight: 600;
+  }
+}
+
+// ---------- Почему удобно ----------
+.benefits {
+  display: grid;
+  gap: 32px;
+  padding: 40px 24px;
+  border-radius: $r-lg;
+  background: $panel url('../assets/waves.svg') center / cover no-repeat;
+  color: $surface;
+  grid-template-columns: 1fr;
+  text-align: center;
+
+  @media (min-width: $bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // Белые круги встают на верхнюю кромку панели (как на скриншоте)
+  @media (min-width: $bp-lg) {
+    grid-template-columns: repeat(4, 1fr);
+    padding-top: 0;
+
+    &__ring {
+      margin-top: -48px;
+    }
+  }
+
+  &__item {
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    align-content: start;
+  }
+
+  &__ring {
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: $surface;
+    color: $ink;
+  }
+}
+
+// ---------- Отключения ----------
+.outage {
+  @include card-surface;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 22px 24px;
+  border: 1.5px solid $line;
+  border-radius: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color $t-fast ease;
+
+  &:hover {
+    border-color: $muted;
+  }
+
+  &:active {
+    background: $canvas;
+  }
+
+  &[aria-pressed='true'] {
+    border: 2.5px solid $ink;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $link;
+  }
+
+  &--static {
+    cursor: default;
+    padding: 28px;
+    border-radius: $r-lg;
+    border-color: transparent;
+    gap: 12px;
+  }
+}
+
+.outage-list {
+  display: grid;
+  gap: 16px;
+}
+
+.map {
+  overflow: hidden;
+  border-radius: $r-lg;
+  background: #DCE6EC;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  &__marker {
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: none;
+
+      .map__dot {
+        stroke: $focus;
+        stroke-width: 5;
+      }
+    }
+
+    &[aria-pressed='true'] .map__dot {
+      stroke: $ink;
+      stroke-width: 6;
+    }
+  }
+}
+
+.details {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border-radius: $r-lg;
+  background: $panel;
+  color: $surface;
+
+  dl {
+    display: grid;
+    gap: 8px;
+  }
+
+  dt {
+    font-size: 0.875rem;
+    color: $on-dark;
+  }
+
+  dd {
+    font-weight: 500;
+  }
+}
+
+// ---------- Таблицы ----------
+.table-wrap {
+  @include card-surface;
+  padding: 8px 24px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 14px 12px 14px 0;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $muted;
+  }
+
+  td {
+    padding: 18px 12px 18px 0;
+    border-top: 1px solid $line;
+    vertical-align: middle;
+  }
+
+  &__id {
+    font-weight: 600;
+  }
+
+  &__row {
+    cursor: pointer;
+
+    &:hover td {
+      background: $canvas;
+    }
+
+    &[aria-current='true'] td {
+      background: $canvas;
+    }
+  }
+
+  @media (max-width: 899px) {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    tr {
+      display: grid;
+      gap: 4px;
+      padding: 16px 0;
+      border-top: 1px solid $line;
+    }
+
+    td {
+      display: block;
+      padding: 0;
+      border: 0;
+    }
+
+    td::before {
+      content: attr(data-label) ': ';
+      font-size: 0.875rem;
+      color: $muted;
+    }
+
+    td.data-table__id::before {
+      content: '';
+    }
+  }
+}
+
+.timeline {
+  display: grid;
+  gap: 16px;
+
+  li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  &__dot {
+    width: 14px;
+    height: 14px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: $st-done;
+  }
+
+  &__time {
+    font-size: 0.875rem;
+    color: $muted;
+  }
+}
+
+.info-cards {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.info-card {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 28px;
+  border-radius: 20px;
+  background: $panel;
+  color: $on-dark;
+
+  .icon {
+    color: $lime;
+  }
+
+  h3 {
+    color: $surface;
+  }
+}
+
+// ---------- Кабинет ----------
+.profile {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: $lime;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.addr-list {
+  display: grid;
+  gap: 10px;
+
+  li {
+    display: grid;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: $canvas;
+  }
+}
+
+.quick {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+
+  &__item {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+    border: 1.5px solid $line;
+    border-radius: 20px;
+    background: $surface;
+    color: $ink;
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: border-color $t-fast ease;
+
+    &:hover {
+      border-color: $ink;
+    }
+
+    &--lime {
+      background: $lime;
+      border-color: $lime;
+    }
+  }
+}
+
+.stack {
+  display: grid;
+  gap: 24px;
+
+  &--sm {
+    gap: 12px;
+  }
+
+  &--lg {
+    gap: 40px;
+  }
+}
+
+.page-title {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+  padding-bottom: 48px;
+  max-width: 760px;
+}
+
+// ---------- Контакты и подвал ----------
+.contact {
+  display: grid;
+  gap: 24px;
+  padding: 16px 16px 28px;
+  border-radius: 36px;
+  background: $panel;
+  color: $surface;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 8px;
+  }
+}
+
+.site-footer {
+  background: $deep;
+  color: $on-dark;
+  padding-top: 48px;
+  padding-bottom: 48px;
+
+  &__grid {
+    display: grid;
+    gap: 32px;
+
+    @media (min-width: $bp-md) {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+
+  h2 {
+    margin-bottom: 12px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $surface;
+  }
+
+  ul {
+    display: grid;
+    gap: 8px;
+  }
+
+  a {
+    color: $on-dark;
+  }
+
+  &__note {
+    font-size: 0.875rem;
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  max-width: 420px;
+  padding: 16px 20px;
+  border-radius: $r-md;
+  background: $deep;
+  color: $surface;
+  box-shadow: 0 8px 24px rgba(27, 51, 66, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition: none !important;
+  }
+}
+
+// ---------- Дополнения ----------
+.page-band {
+  background: $ink;
+  color: $surface;
+}
+
+.nav__item--cabinet {
+  @media (min-width: $bp-lg) {
+    display: none;
+  }
+}
+
+.logo__mark-img {
+  border-radius: 12px;
+}
+
+.cab-list {
+  display: grid;
+}
+
+.contact .map {
+  border-radius: 20px;
+}
+
+.main-card {
+  @include card-surface;
+}
+
+// ---------- Новости, контакты, вход, 404 ----------
+.news-card {
+  @include card-surface;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 24px;
+  overflow-wrap: anywhere;
+
+  &__meta {
+    font-size: $fs-md;
+    color: $muted;
+  }
+}
+
+.org-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.org {
+  @include card-surface;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 22px 24px;
+  overflow-wrap: anywhere;
+
+  &__phone {
+    font-size: $fs-3xl;
+    font-weight: 600;
+    color: $ink;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__hours {
+    font-size: $fs-md;
+    color: $muted;
+  }
+}
+
+.login {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.login__hint {
+  padding: 12px 16px;
+  border-radius: $r-sm;
+  background: $canvas;
+  font-size: $fs-md;
+}
+
+.empty-state {
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+  max-width: 640px;
+}
+
+.loading {
+  color: $muted;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 10px;
+    border: 2px solid $line;
+    border-top-color: $ink;
+    border-radius: 50%;
+    vertical-align: -2px;
+    animation: spin $t-slow linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.svc-card__ring {
+  box-shadow: $shadow-2;
+}
+
+.hero-chips a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.hero-chips li {
+  padding: 0;
+}
+
+.hero-chips a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 18px 10px 14px;
+}
+
+.auto-grid--quad {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+
+.section__title-center--tall {
+  @media (min-width: $bp-lg) {
+    margin-bottom: 96px;
+  }
+}
+
+.marquee__group .icon {
+  width: 2.25rem;
+  height: 2.25rem;
+}
