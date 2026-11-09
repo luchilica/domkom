@@ -417,6 +417,7 @@ button {
 
     @media (min-width: $bp-lg) {
       display: inline-flex;
+      white-space: nowrap;
     }
   }
 }
@@ -518,11 +519,15 @@ button {
 
     &__list {
       display: flex;
-      gap: 32px;
+      gap: 24px;
     }
 
     &__link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       padding: 8px 0;
+      white-space: nowrap;
     }
   }
 }
@@ -1452,10 +1457,13 @@ button {
 
   ul {
     display: grid;
-    gap: 8px;
+    gap: 0;
   }
 
   a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: $on-dark;
   }
 
@@ -1546,6 +1554,9 @@ button {
   overflow-wrap: anywhere;
 
   &__phone {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: $fs-3xl;
     font-weight: 600;
     color: $ink;

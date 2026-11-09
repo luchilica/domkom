@@ -32,6 +32,7 @@
     return Array.prototype.slice.call((root || document).querySelectorAll(selector));
   }
 
+  /** Создаёт элемент: класс, текст (через textContent) и атрибуты. Единственная точка создания HTML-узлов. */
   function el(tag, className, text, attrs) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -44,6 +45,7 @@
     return node;
   }
 
+  /** Создаёт SVG-элемент в пространстве имён SVG (createElementNS), иначе браузер не отрисует его. */
   function svgEl(tag, attrs) {
     var node = document.createElementNS(SVG_NS, tag);
     Object.keys(attrs || {}).forEach(function (key) {
@@ -52,10 +54,12 @@
     return node;
   }
 
+  /** Удаляет всех потомков узла перед повторной отрисовкой списка. */
   function clear(node) {
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
+  /** Возвращает <svg><use> со ссылкой на символ спрайта assets/icons.svg#i-<имя>. */
   function icon(name, extraClass) {
     var svg = svgEl('svg', { class: 'icon' + (extraClass ? ' ' + extraClass : ''), 'aria-hidden': 'true', focusable: 'false' });
     var use = svgEl('use', {});
@@ -74,6 +78,7 @@
     return doc;
   }
 
+  /** Загружает XML-файл через fetch и возвращает Promise с XML-документом. */
   function loadXML(url) {
     return fetch(url).then(function (response) {
       if (!response.ok) throw new Error('Не удалось загрузить ' + url + ' (' + response.status + ')');
@@ -81,11 +86,13 @@
     });
   }
 
+  /** Возвращает текст первого дочернего элемента с заданным тегом (пустая строка, если его нет). */
   function childText(node, tag) {
     var child = node.getElementsByTagName(tag)[0];
     return child ? child.textContent.trim() : '';
   }
 
+  /** Показывает в контейнере понятное сообщение, если данные не загрузились (role="alert"). */
   function showLoadError(container, error) {
     clear(container);
     var box = el('p', 'muted', 'Не удалось загрузить данные. Откройте сайт через веб-сервер (например, npm start), а не как файл. ', { role: 'alert' });
@@ -98,26 +105,31 @@
     return n < 10 ? '0' + n : String(n);
   }
 
+  /** Разбирает дату ISO (ГГГГ-ММ-ДД[ТЧЧ:ММ]) в объект частей; null, если формат неверный. */
   function splitDate(value) {
     var m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(value || '');
     return m ? { y: m[1], mo: m[2], d: m[3], h: m[4] || '', mi: m[5] || '' } : null;
   }
 
+  /** Формат ДД.ММ.ГГГГ. */
   function fmtDate(value) {
     var p = splitDate(value);
     return p ? p.d + '.' + p.mo + '.' + p.y : '';
   }
 
+  /** Формат ДД.ММ, ЧЧ:ММ. */
   function fmtDateTime(value) {
     var p = splitDate(value);
     return p ? p.d + '.' + p.mo + (p.h ? ', ' + p.h + ':' + p.mi : '') : '';
   }
 
+  /** Формат ДД.ММ.ГГГГ, ЧЧ:ММ. */
   function fmtFull(value) {
     var p = splitDate(value);
     return p ? p.d + '.' + p.mo + '.' + p.y + (p.h ? ', ' + p.h + ':' + p.mi : '') : '';
   }
 
+  /** Человекочитаемый период отключения (один день или несколько, либо «срок уточняется»). */
   function fmtPeriod(from, to) {
     var a = splitDate(from);
     var b = splitDate(to);
@@ -147,12 +159,14 @@
     };
   }
 
+  /** Загружает data/outages.xml и возвращает массив объектов отключений. */
   function loadOutages() {
     return loadXML('data/outages.xml').then(function (doc) {
       return Array.prototype.map.call(doc.getElementsByTagName('outage'), parseOutage);
     });
   }
 
+  /** Подбирает имя иконки по виду услуги (вода, тепло, электричество). */
   function serviceIcon(service) {
     return service === 'water' ? 'drop' : service === 'heat' ? 'flame' : 'bolt';
   }
@@ -174,6 +188,7 @@
     };
   }
 
+  /** Читает XML-документ заявок пользователя из localStorage или создаёт пустой <requests>. */
   function localDoc() {
     var stored = null;
     try {
@@ -191,6 +206,7 @@
     return parseXML('<?xml version="1.0" encoding="UTF-8"?><requests></requests>');
   }
 
+  /** Сериализует XML-документ заявок (XMLSerializer) и сохраняет его в localStorage. */
   function saveLocalDoc(doc) {
     try {
       window.localStorage.setItem(STORE_KEY, new XMLSerializer().serializeToString(doc));
@@ -199,6 +215,7 @@
     }
   }
 
+  /** Объединяет демонстрационные заявки из data/requests.xml с заявками из localStorage. */
   function loadRequests() {
     return loadXML('data/requests.xml').then(function (baseDoc) {
       var items = Array.prototype.map.call(baseDoc.getElementsByTagName('request'), parseRequest);
@@ -209,6 +226,7 @@
     });
   }
 
+  /** Вычисляет следующий номер заявки вида ГГГГ-NNNN по уже имеющимся. */
   function nextRequestNumber(existing) {
     var max = 0;
     existing.forEach(function (r) {
@@ -218,6 +236,7 @@
     return '2026-' + String(max + 1).padStart(4, '0');
   }
 
+  /** Создаёт XML-узел новой заявки методами DOM, добавляет в документ и сохраняет; возвращает номер. */
   function addLocalRequest(data, existing) {
     var doc = localDoc();
     var root = doc.documentElement;
@@ -246,6 +265,7 @@
     return id;
   }
 
+  /** Создаёт «чип» статуса; цвет задаётся атрибутом data-status в SCSS. */
   function statusBadge(code, label) {
     return el('span', 'status', label || STATUS[code] || code, { 'data-status': code });
   }
@@ -256,6 +276,7 @@
     var nav = $('#site-nav');
     if (!toggle || !nav) return;
 
+    /** Открывает или закрывает меню, синхронизируя aria-expanded и подпись кнопки. */
     function setOpen(open) {
       nav.setAttribute('data-open', open ? 'true' : 'false');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -279,10 +300,12 @@
     var confirmBox = $('[data-confirm]');
     var phoneInput = form.elements.phone;
 
+    /** Находит обёртку поля формы по атрибуту data-field. */
     function field(name) {
       return $('[data-field="' + name + '"]', form);
     }
 
+    /** Показывает или снимает сообщение об ошибке у поля и выставляет aria-invalid. */
     function setError(name, message) {
       var wrap = field(name);
       if (!wrap) return;
@@ -309,6 +332,7 @@
       }
     }
 
+    /** Возвращает очищенное значение поля формы. */
     function value(name) {
       var control = form.elements[name];
       if (!control) return '';
@@ -321,6 +345,7 @@
       return String(control.value || '').trim();
     }
 
+    /** Проверяет все поля формы; возвращает true, если ошибок нет. */
     function validate() {
       var errors = {};
       if (!value('category')) errors.category = 'Выберите категорию проблемы';
@@ -453,15 +478,18 @@
     var state = { service: 'all', district: 'all', selected: null };
     var all = [];
 
+    /** Проверяет, подходит ли отключение под выбранные фильтры. */
     function matches(o) {
       return (state.service === 'all' || o.service === state.service) && (state.district === 'all' || o.district === state.district);
     }
 
+    /** Выбирает отключение: подсвечивает строку и маркер, выводит подробности. */
     function select(id) {
       state.selected = state.selected === id ? null : id;
       render();
     }
 
+    /** Заполняет панель подробностей выбранного элемента. */
     function renderDetails(o) {
       clear(details);
       if (!o) {
@@ -480,6 +508,7 @@
       details.appendChild(dl);
     }
 
+    /** Перерисовывает список (и карту) с учётом текущих фильтров. */
     function render() {
       var visible = all.filter(matches);
       if (state.selected && !visible.some(function (o) { return o.id === state.selected; })) state.selected = null;
@@ -561,6 +590,7 @@
     var state = { status: 'all', selected: null };
     var all = [];
 
+    /** Заполняет панель подробностей выбранного элемента. */
     function renderDetails(r) {
       clear(details);
       if (!r) {
@@ -583,6 +613,7 @@
       details.appendChild(ol);
     }
 
+    /** Перерисовывает список (и карту) с учётом текущих фильтров. */
     function render() {
       var visible = all.filter(function (r) {
         return state.status === 'all' || r.status === state.status;
@@ -605,6 +636,7 @@
         var statusCell = el('td', '', null, { 'data-label': 'Статус' });
         statusCell.appendChild(statusBadge(r.status));
         tr.appendChild(statusCell);
+        /** Выбор заявки в списке мышью или клавиатурой. */
         function choose() {
           state.selected = r.id;
           render();
@@ -745,12 +777,14 @@
     });
   }
 
+  /** Личный кабинет: имитация входа (sessionStorage), адреса, заявки и отключения рядом с домом. */
   function pageCabinet() {
     var loginView = $('#login-view');
     var view = $('#cabinet-view');
     var form = $('#login-form');
     var errBox = $('#login-error');
 
+    /** Проверяет признак входа в sessionStorage (с защитой от недоступного хранилища). */
     function isAuthed() {
       try {
         return window.sessionStorage.getItem(AUTH_KEY) === '1';
@@ -759,6 +793,7 @@
       }
     }
 
+    /** Запоминает или сбрасывает признак входа. */
     function setAuthed(on) {
       try {
         if (on) window.sessionStorage.setItem(AUTH_KEY, '1');
@@ -768,6 +803,7 @@
       }
     }
 
+    /** Перерисовывает список (и карту) с учётом текущих фильтров. */
     function render() {
       var on = isAuthed();
       loginView.hidden = on;
