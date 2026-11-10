@@ -542,17 +542,26 @@ button {
 
   &__art {
     position: absolute;
-    left: 0;
-    bottom: 0;
+    inset: 0;
     width: 100%;
-    height: 220px;
+    height: 100%;
     object-fit: cover;
-    object-position: left bottom;
+    object-position: center 35%;
     pointer-events: none;
+  }
+
+  // сплошная полупрозрачная заливка для читаемости текста поверх фото
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(18, 36, 48, .8);
   }
 
   &__body {
     position: relative;
+    z-index: 2;
     display: grid;
     gap: 32px;
     padding-top: 40px;
@@ -590,10 +599,6 @@ button {
 
   @media (min-width: $bp-md) {
     padding-bottom: 240px;
-
-    &__art {
-      height: 300px;
-    }
   }
 }
 
