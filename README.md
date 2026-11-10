@@ -28,7 +28,7 @@
 
 - Git Super Linter: `.github/workflows/lint.yml`.
 - W3C Markup Validation Service: проверять каждый `.html` вручную на https://validator.w3.org/.
-- Публикация: GitHub Pages (`.github/workflows/pages.yml`) или Vercel (`vercel.json`).
+- Публикация: GitHub Pages (`.github/workflows/pages.yml`).
 
 ## Дизайн
 
