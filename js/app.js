@@ -1,8 +1,8 @@
 /**
- * ДомПортал — клиентская логика.
+ * ДомПортал – клиентская логика.
  * Данные хранятся в XML (папка data/), загружаются через fetch и разбираются DOMParser.
  * Заявки, созданные пользователем, сериализуются обратно в XML-строку (localStorage).
- * Весь вывод строится методами DOM и textContent — без innerHTML (защита от XSS).
+ * Весь вывод строится методами DOM и textContent – без innerHTML (защита от XSS).
  */
 (function () {
   'use strict';
@@ -211,7 +211,7 @@
     try {
       window.localStorage.setItem(STORE_KEY, new XMLSerializer().serializeToString(doc));
     } catch (e) {
-      /* хранилище недоступно (приватный режим) — заявка живёт до перезагрузки */
+      /* хранилище недоступно (приватный режим) – заявка живёт до перезагрузки */
     }
   }
 
@@ -599,7 +599,7 @@
       }
       details.appendChild(el('h2', 'h3', 'Заявка № ' + r.id));
       details.appendChild(statusBadge(r.status));
-      details.appendChild(el('p', 'muted', (CATEGORY[r.category] || r.category) + '. ' + r.description + ' — ' + r.address));
+      details.appendChild(el('p', 'muted', (CATEGORY[r.category] || r.category) + '. ' + r.description + ' – ' + r.address));
       var ol = el('ol', 'timeline');
       r.events.forEach(function (ev) {
         var li = el('li');
@@ -745,7 +745,7 @@
           box.appendChild(el('p', 'on-dark', 'Рядом с вашим домом отключений нет.'));
         }
         mine.forEach(function (o) {
-          box.appendChild(el('p', 'on-dark', o.address + ' — ' + o.title.toLowerCase() + '. ' + fmtPeriod(o.from, o.to) + '.'));
+          box.appendChild(el('p', 'on-dark', o.address + ' – ' + o.title.toLowerCase() + '. ' + fmtPeriod(o.from, o.to) + '.'));
         });
       }).catch(function (e) {
         showLoadError($('#cab-outages'), e);

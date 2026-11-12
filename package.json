@@ -1,7 +1,7 @@
 {
   "name": "domportal",
   "version": "1.0.0",
-  "description": "Городской портал коммунальных услуг — учебный проект",
+  "description": "Городской портал коммунальных услуг – учебный проект",
   "private": true,
   "scripts": {
     "build": "sass scss/main.scss css/main.css --style=expanded --no-source-map",
