@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 permissions:
   contents: read
   pages: write
@@ -14,8 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm install && npm run build
+        with:
+          node-version: 22
+      - name: Build CSS
+        run: npm install && npm run build
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp *.html _site/
+          cp -r css js assets data _site/
       - uses: actions/upload-pages-artifact@v3
-        with: { path: . }
+        with:
+          path: _site
       - uses: actions/deploy-pages@v4
