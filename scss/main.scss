@@ -754,10 +754,6 @@ button {
   gap: 32px 24px;
   grid-template-columns: repeat(2, 1fr);
 
-  @media (min-width: $bp-sm) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
   &__num {
     display: block;
     font-size: clamp(2.25rem, 5vw, 4rem);

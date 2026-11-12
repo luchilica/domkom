@@ -719,12 +719,6 @@ button {
   grid-template-columns: repeat(2, 1fr);
 }
 
-@media (min-width: 600px) {
-  .stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 .stats__num {
   display: block;
   font-size: clamp(2.25rem, 5vw, 4rem);
