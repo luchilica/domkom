@@ -1,5 +1,5 @@
 /**
- * ДомПортал – клиентская логика.
+ * Домовой – клиентская логика.
  * Данные хранятся в XML (папка data/), загружаются через fetch и разбираются DOMParser.
  * Заявки, созданные пользователем, сериализуются обратно в XML-строку (localStorage).
  * Весь вывод строится методами DOM и textContent – без innerHTML (защита от XSS).
@@ -20,8 +20,8 @@
     other: 'Другое'
   };
   var SVG_NS = 'http://www.w3.org/2000/svg';
-  var STORE_KEY = 'domportal.requests.v1';
-  var AUTH_KEY = 'domportal.auth.v1';
+  var STORE_KEY = 'domovoy.requests.v1';
+  var AUTH_KEY = 'domovoy.auth.v1';
 
   // ---------- Утилиты DOM ----------
   function $(selector, root) {
