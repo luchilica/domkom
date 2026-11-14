@@ -34,6 +34,11 @@
 
 Правила дизайна, токены, состояния компонентов и критерии доступности: [DESIGN.md](DESIGN.md).
 
+## Шрифт и фотографии
+
+- Шрифт Rubik размещён локально: `assets/fonts/Rubik-VF.woff` (лицензия SIL OFL).
+- Фотографии на главной подключены по ссылкам с Unsplash (бесплатная лицензия). Авторы: Veranika Kendysh, Vitaly Gariev; подписи есть под снимками. Для работы без интернета снимки можно скачать в `assets/img/` и заменить ссылки в `index.html`.
+
 ## Макеты
 
 Figma: https://www.figma.com/design/uGvattni8130v6nWTfHDDg
