@@ -404,12 +404,48 @@
     });
   }
 
+  // Склонение существительного по числу: plural(2, ['авария', 'аварии', 'аварий'])
+  function plural(n, forms) {
+    var m10 = n % 10;
+    var m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) {
+      return forms[0];
+    }
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) {
+      return forms[1];
+    }
+    return forms[2];
+  }
+
+  // Сводка отключений в верхнем блоке главной
+  function showHeroStatus(items) {
+    var box = $('#hero-status');
+    if (!box) {
+      return;
+    }
+    var emergency = items.filter(function (o) { return o.type === 'emergency'; }).length;
+    var planned = items.length - emergency;
+    var parts = [];
+    if (emergency) {
+      parts.push(emergency + ' ' + plural(emergency, ['авария', 'аварии', 'аварий']));
+    }
+    if (planned) {
+      parts.push(planned + ' ' + plural(planned, ['плановое отключение', 'плановых отключения', 'плановых отключений']));
+    }
+    if (!parts.length) {
+      return;
+    }
+    box.textContent = 'Сейчас в городе: ' + parts.join(' и ');
+    box.hidden = false;
+  }
+
   // ---------- Страница: главная ----------
   function pageHome() {
     var list = $('#home-outages');
     if (list) {
       loadOutages().then(function (items) {
         clear(list);
+        showHeroStatus(items);
         items.slice(0, 2).forEach(function (o) {
           var card = el('article', 'outage outage--static');
           var top = el('div', 'outage__top');

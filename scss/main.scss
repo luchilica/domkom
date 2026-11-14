@@ -1,6 +1,14 @@
 // Домовой – стили. Источник SCSS, компилируется в css/main.css.
 // Используются: переменные, вложенность, миксины, медиазапросы (mobile-first).
 
+@font-face {
+  font-family: 'Rubik';
+  src: url('../assets/fonts/Rubik-VF.woff') format('woff');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 // ---------- Токены ----------
 $ink: #274455;
 $deep: #1B3342;
@@ -10,10 +18,10 @@ $lime: #C2DB64;
 $lime-press: #A9C444;
 $lime-ink: #5C7A12; // зелёный текст на светлом фоне (4.9:1), вместо лаймового из скриншота
 $canvas: #F3F6F8;
-$surface: #FFFFFF;
+$surface: #FBFDFD; // тонированный белый
 $muted: #5A7180;
 $line: #D5E0E6;
-$on-dark: #C9D8E1;
+$on-dark: #D3E1E8;
 $link: #1D5F8A;
 $st-new: #2A74A3;
 $st-work: #F2C14E;
@@ -24,9 +32,9 @@ $font: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 $bp-sm: 600px;
 $bp-md: 900px;
 $bp-lg: 1180px;
-$r-sm: 10px;
-$r-md: 16px;
-$r-lg: 28px;
+$r-sm: 8px;   // кнопки, поля
+$r-md: 14px;  // карточки
+$r-lg: 24px;  // крупные панели
 $t-fast: 200ms;   // motion.duration.instant
 $t-normal: 300ms; // motion.duration.fast
 $t-slow: 600ms;   // motion.duration.normal
@@ -40,10 +48,8 @@ $fs-2xl: 1.25rem;    // 20px
 $fs-3xl: 1.375rem;   // 22px
 $fs-4xl: 3.84rem;    // 61.44px
 
-// Тени (DESIGN.md: shadow.1–3)
-$shadow-1: rgba(39, 68, 85, 0.1) 0 0 0 1px;
-$shadow-2: rgba(0, 0, 0, 0.3) 0 1px 2px 0;
-$shadow-3: inset rgba(0, 0, 0, 0.4) 0 1px 2px 0;
+// Контур вместо теней: иерархию задают заливка и линия
+$shadow-1: rgba(39, 68, 85, 0.12) 0 0 0 1px;
 
 // ---------- Миксины ----------
 @mixin focus-ring {
@@ -55,12 +61,6 @@ $shadow-3: inset rgba(0, 0, 0, 0.4) 0 1px 2px 0;
   background: $surface;
   border-radius: $r-lg;
   box-shadow: $shadow-1;
-}
-
-@mixin pill {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 250px;
 }
 
 // ---------- База ----------
@@ -207,19 +207,20 @@ button {
 
 // ---------- Типографика ----------
 .display {
-  font-size: clamp(2.25rem, 7.2vw, $fs-4xl);
-  line-height: 1.08;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
+  font-size: clamp(2.5rem, 6.4vw, 4.25rem);
+  line-height: 1.04;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
 .h2 {
-  font-size: clamp(1.75rem, 4.4vw, 2.75rem);
-  line-height: 1.15;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
@@ -287,6 +288,17 @@ button {
     }
   }
 
+  &--outline {
+    background: transparent;
+    color: $ink;
+    border-color: $ink;
+
+    &:hover {
+      background: $ink;
+      color: $surface;
+    }
+  }
+
   &--dark {
     background: $ink;
     color: $surface;
@@ -319,7 +331,9 @@ button {
 }
 
 .chip {
-  @include pill;
+  display: inline-flex;
+  align-items: center;
+  border-radius: $r-sm;
   min-height: 44px;
   padding: 8px 18px;
   border: 1.5px solid $line;
@@ -364,14 +378,26 @@ button {
 }
 
 .status {
-  @include pill;
-  padding: 4px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 4px 10px;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
   white-space: nowrap;
   background: $line;
   color: $ink;
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
 
   &[data-status='new'] {
     background: $st-new;
@@ -533,19 +559,34 @@ button {
 }
 
 // ---------- Hero ----------
+// Силуэт города: передний план (hero__art) и дальний (::after), светится одно окно с «глазами» домового.
 .hero {
   position: relative;
   overflow: hidden;
   background: $ink;
   color: $surface;
-  padding-bottom: 180px;
+  padding-bottom: 190px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 210px;
+    background: url('../assets/city-back.svg') right bottom / auto 100% repeat-x;
+    transform: scaleX(-1);
+    opacity: 0.4;
+    pointer-events: none;
+  }
 
   &__art {
     position: absolute;
     left: 0;
     bottom: 0;
+    z-index: 1;
     width: 100%;
-    height: 220px;
+    height: 190px;
     object-fit: cover;
     object-position: left bottom;
     pointer-events: none;
@@ -553,69 +594,59 @@ button {
 
   &__body {
     position: relative;
+    z-index: 2;
     display: grid;
-    gap: 32px;
-    padding-top: 40px;
-  }
-
-  &__accent {
-    display: block;
-    color: $lime;
-
-    @media (min-width: $bp-md) {
-      text-align: right;
-    }
-  }
-
-  &__row {
-    display: grid;
-    gap: 28px;
-
-    @media (min-width: $bp-md) {
-      grid-template-columns: 1fr minmax(0, 480px);
-      align-items: end;
-    }
-  }
-
-  &__text {
-    display: grid;
+    justify-items: start;
     gap: 24px;
+    padding-top: 48px;
+  }
+
+  &__title {
+    max-width: 12em;
+  }
+
+  &__lead {
+    max-width: 34rem;
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
+  }
+
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: $surface;
+    font-weight: 500;
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: $st-work;
+    }
   }
 
   @media (min-width: $bp-md) {
-    padding-bottom: 240px;
+    padding-bottom: 260px;
+
+    &::after {
+      height: 290px;
+    }
 
     &__art {
-      height: 300px;
+      height: 270px;
     }
-  }
-}
 
-.hero-chips {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-
-  li {
-    @include pill;
-    gap: 10px;
-    padding: 10px 18px 10px 14px;
-    background: $panel;
-    font-weight: 500;
-    font-size: 1rem;
-  }
-
-  .icon {
-    color: $lime;
-    width: 1.25rem;
-    height: 1.25rem;
+    &__body {
+      padding-top: 64px;
+    }
   }
 }
 
@@ -634,9 +665,11 @@ button {
     color: $surface;
   }
 
-  // Карточки пересекают границу светлой и тёмной секций (как на скриншоте)
-  &--split {
-    background: linear-gradient(to bottom, $canvas calc(100% - 220px), $panel calc(100% - 220px));
+  &--tight {
+    @media (min-width: $bp-md) {
+      padding-top: 64px;
+      padding-bottom: 64px;
+    }
   }
 
   &--flush-top {
@@ -645,19 +678,12 @@ button {
 
   &__head {
     display: grid;
-    gap: 16px;
-    margin-bottom: 32px;
-
-    @media (min-width: $bp-md) {
-      grid-template-columns: 1fr minmax(0, 420px);
-      align-items: center;
-      margin-bottom: 48px;
-    }
-  }
-
-  &__title-center {
-    text-align: center;
+    gap: 12px;
     margin-bottom: 40px;
+
+    .lead {
+      max-width: 44rem;
+    }
   }
 }
 
@@ -667,147 +693,228 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
 }
 
-.svc-card {
-  @include card-surface;
+// ---------- Главные действия: одно крупное и три строки-ссылки ----------
+.actions {
   display: grid;
-  gap: 20px;
-  grid-template-rows: auto 1fr auto;
-  padding: 16px 16px 24px;
+  gap: 32px;
 
-  &__art {
-    display: grid;
-    place-items: center;
-    min-height: 170px;
-    border-radius: 20px;
-    background: $ink;
-  }
-
-  &__ring {
-    display: grid;
-    place-items: center;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: $panel;
-    color: $lime;
-  }
-
-  &__text {
-    display: grid;
-    gap: 10px;
-    padding: 0 8px;
-  }
-
-  &__meta {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: $lime-ink;
+  @media (min-width: $bp-md) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 64px;
   }
 }
 
-.ref-card {
+.action-main {
   display: grid;
-  gap: 12px;
   align-content: start;
-  padding: 28px;
-  border-radius: 20px;
-  background: $card;
+  justify-items: start;
+  gap: 28px;
+  padding: 32px;
+  border-radius: $r-lg;
+  background: $ink;
   color: $surface;
-
-  &__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    color: $surface;
-  }
 
   .icon {
     color: $lime;
   }
+
+  p {
+    color: $on-dark;
+  }
+
+  &__meta {
+    font-weight: 500;
+    color: $lime;
+  }
 }
 
-// ---------- О портале ----------
-.about {
+.action-list {
+  display: grid;
+  align-content: start;
+  border-bottom: 1px solid $line;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 4px 20px;
+  align-items: start;
+  padding: 26px 0;
+  border-top: 1px solid $line;
+  color: $ink;
+  text-decoration: none;
+
+  .icon {
+    grid-row: 1 / span 2;
+    margin-top: 2px;
+  }
+
+  p {
+    grid-column: 2;
+    color: $muted;
+  }
+
+  &__go {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    padding-top: 2px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  &:hover &__go {
+    text-decoration-color: $lime-press;
+  }
+
+  @media (max-width: 599px) {
+    grid-template-columns: 32px minmax(0, 1fr);
+
+    &__go {
+      grid-column: 2;
+      grid-row: auto;
+    }
+  }
+}
+
+// ---------- Справочник: перечень ссылок ----------
+.index-list {
+  display: grid;
+  column-gap: 64px;
+
+  @media (min-width: $bp-md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.index-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 4px 16px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(251, 253, 253, 0.25);
+  color: $surface;
+  text-decoration: none;
+
+  .icon {
+    grid-row: 1 / span 2;
+    margin-top: 3px;
+    color: $lime;
+  }
+
+  p {
+    grid-column: 2;
+    color: $on-dark;
+  }
+
+  &:hover h3 {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+}
+
+// ---------- О портале и «Почему удобно»: текст и фото ----------
+.about,
+.why {
   display: grid;
   gap: 40px;
   align-items: center;
 
   @media (min-width: $bp-md) {
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 72px;
   }
 
   &__text {
     display: grid;
+    justify-items: start;
     gap: 24px;
   }
 }
 
-.stats {
-  display: grid;
-  gap: 32px 24px;
-  grid-template-columns: repeat(2, 1fr);
-
-  &__num {
-    display: block;
-    font-size: clamp(2.25rem, 5vw, 4rem);
-    line-height: 1.05;
-    font-weight: 600;
-    color: $lime;
+.why {
+  @media (min-width: $bp-md) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   }
 
-  &__label {
-    font-size: 0.875rem;
+  &__list {
+    display: grid;
+  }
+
+  &__item {
+    display: grid;
+    gap: 6px;
+    padding: 22px 0;
+    border-top: 1px solid $line;
+
+    &:last-child {
+      border-bottom: 1px solid $line;
+    }
+
+    p {
+      color: $muted;
+    }
+  }
+}
+
+.photo {
+  display: grid;
+  gap: 10px;
+
+  &__frame {
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border-radius: $r-lg;
+    background: $deep;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  figcaption {
+    font-size: $fs-sm;
+    color: $muted;
+  }
+
+  &--dark figcaption {
     color: $on-dark;
   }
 }
 
-// ---------- Бегущая строка ----------
-.marquee {
-  overflow: hidden;
+// ---------- Полоса «срочная авария» ----------
+.strip {
   background: $lime;
   color: $ink;
-  padding: 24px 0;
+  padding: 20px 0;
 
-  &__track {
+  &__row {
     display: flex;
-    width: max-content;
-    animation: marquee 40s linear infinite;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 32px;
   }
 
-  &__group {
-    display: flex;
-    align-items: center;
-    gap: 48px;
-    padding-right: 48px;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    font-weight: 700;
-    text-transform: uppercase;
+  p {
+    font-size: $fs-2xl;
+    font-weight: 600;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    &__track {
-      animation: none;
-      width: auto;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    &__group[aria-hidden='true'] {
-      display: none;
-    }
+  a {
+    color: $ink;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
   }
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 
 // ---------- FAQ + форма ----------
 .split {
@@ -925,8 +1032,6 @@ button {
       color: $muted;
     }
 
-    box-shadow: $shadow-3;
-
     &:hover {
       border-color: $muted;
     }
@@ -983,7 +1088,9 @@ button {
   }
 
   label {
-    @include pill;
+    display: inline-flex;
+    align-items: center;
+    border-radius: $r-sm;
     min-height: 44px;
     padding: 8px 18px;
     border: 1.5px solid $line;
@@ -1065,49 +1172,6 @@ button {
   }
 }
 
-// ---------- Почему удобно ----------
-.benefits {
-  display: grid;
-  gap: 32px;
-  padding: 40px 24px;
-  border-radius: $r-lg;
-  background: $panel url('../assets/waves.svg') center / cover no-repeat;
-  color: $surface;
-  grid-template-columns: 1fr;
-  text-align: center;
-
-  @media (min-width: $bp-sm) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  // Белые круги встают на верхнюю кромку панели (как на скриншоте)
-  @media (min-width: $bp-lg) {
-    grid-template-columns: repeat(4, 1fr);
-    padding-top: 0;
-
-    &__ring {
-      margin-top: -48px;
-    }
-  }
-
-  &__item {
-    display: grid;
-    gap: 12px;
-    justify-items: center;
-    align-content: start;
-  }
-
-  &__ring {
-    display: grid;
-    place-items: center;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: $surface;
-    color: $ink;
-  }
-}
-
 // ---------- Отключения ----------
 .outage {
   @include card-surface;
@@ -1116,7 +1180,7 @@ button {
   width: 100%;
   padding: 22px 24px;
   border: 1.5px solid $line;
-  border-radius: 20px;
+  border-radius: $r-md;
   text-align: left;
   cursor: pointer;
   transition: border-color $t-fast ease;
@@ -1142,8 +1206,8 @@ button {
 
   &--static {
     cursor: default;
-    padding: 28px;
-    border-radius: $r-lg;
+    padding: 24px;
+    border-radius: $r-md;
     border-color: transparent;
     gap: 12px;
   }
@@ -1232,6 +1296,20 @@ button {
 
   &__id {
     font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td:nth-child(2) {
+    white-space: nowrap;
+  }
+
+  // Описание помещается в таблице только на широких экранах,
+  // на средних оно показано в панели справа
+  @media (min-width: 900px) and (max-width: 1359px) {
+    th:nth-child(4),
+    td:nth-child(4) {
+      display: none;
+    }
   }
 
   &__row {
@@ -1316,7 +1394,7 @@ button {
   gap: 12px;
   align-content: start;
   padding: 28px;
-  border-radius: 20px;
+  border-radius: $r-md;
   background: $panel;
   color: $on-dark;
 
@@ -1370,7 +1448,7 @@ button {
     gap: 12px;
     padding: 24px;
     border: 1.5px solid $line;
-    border-radius: 20px;
+    border-radius: $r-md;
     background: $surface;
     color: $ink;
     font-weight: 600;
@@ -1407,6 +1485,9 @@ button {
   gap: 12px;
   padding-top: 8px;
   padding-bottom: 48px;
+}
+
+.page-title > * {
   max-width: 760px;
 }
 
@@ -1415,7 +1496,7 @@ button {
   display: grid;
   gap: 24px;
   padding: 16px 16px 28px;
-  border-radius: 36px;
+  border-radius: $r-lg;
   background: $panel;
   color: $surface;
 
@@ -1513,7 +1594,7 @@ button {
 }
 
 .contact .map {
-  border-radius: 20px;
+  border-radius: $r-md;
 }
 
 .main-card {
@@ -1522,11 +1603,11 @@ button {
 
 // ---------- Новости, контакты, вход, 404 ----------
 .news-card {
-  @include card-surface;
   display: grid;
   gap: 10px;
   align-content: start;
-  padding: 24px;
+  padding: 18px 0 0;
+  border-top: 2px solid $ink;
   overflow-wrap: anywhere;
 
   &__meta {
@@ -1609,44 +1690,4 @@ button {
   to {
     transform: rotate(360deg);
   }
-}
-
-.svc-card__ring {
-  box-shadow: $shadow-2;
-}
-
-.hero-chips a {
-  color: inherit;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.hero-chips li {
-  padding: 0;
-}
-
-.hero-chips a {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 10px 18px 10px 14px;
-}
-
-.auto-grid--quad {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-}
-
-.section__title-center--tall {
-  @media (min-width: $bp-lg) {
-    margin-bottom: 96px;
-  }
-}
-
-.marquee__group .icon {
-  width: 2.25rem;
-  height: 2.25rem;
 }
