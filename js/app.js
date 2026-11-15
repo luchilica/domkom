@@ -95,8 +95,7 @@
   /** Показывает в контейнере понятное сообщение, если данные не загрузились (role="alert"). */
   function showLoadError(container, error) {
     clear(container);
-    var box = el('p', 'muted', 'Не удалось загрузить данные. Откройте сайт через веб-сервер (например, npm start), а не как файл. ', { role: 'alert' });
-    box.appendChild(el('span', null, '(' + error.message + ')'));
+    var box = el('p', 'muted', 'Не удалось загрузить данные. Обновите страницу или повторите попытку позже.', { role: 'alert' });
     container.appendChild(box);
   }
 
@@ -742,7 +741,6 @@
   // ---------- Страница: тарифы ----------
   function pageTariffs() {
     var body = $('#tariff-body');
-    var note = $('#tariff-note');
     var orgs = $('#org-list');
     if (orgs) {
       loadXML('data/contacts.xml').then(function (doc) {
@@ -764,7 +762,6 @@
       var root = doc.documentElement;
       var currency = root.getAttribute('currency') || 'BYN';
       $('#tariff-currency').textContent = 'Тариф, ' + currency;
-      if (root.getAttribute('demo') === 'true') note.hidden = false;
       clear(body);
       Array.prototype.forEach.call(doc.getElementsByTagName('tariff'), function (t) {
         var tr = el('tr');
@@ -886,7 +883,7 @@
           render();
           $('#cab-name').focus();
         } else {
-          errBox.textContent = 'Неверный логин или пароль. Для демо: demo / demo2026.';
+          errBox.textContent = 'Неверный логин или пароль. Проверьте данные и попробуйте снова.';
           errBox.hidden = false;
           form.elements.password.focus();
         }
