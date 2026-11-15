@@ -439,8 +439,33 @@
     box.hidden = false;
   }
 
+  // ---------- Окна на первом экране: подмигивают по нажатию ----------
+  function initWindows() {
+    $$('.win').forEach(function (win) {
+      var timer = null;
+      function wink() {
+        win.classList.remove('is-wink');
+        // перезапуск анимации при повторном нажатии
+        void win.getBoundingClientRect();
+        win.classList.add('is-wink');
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          win.classList.remove('is-wink');
+        }, 1100);
+      }
+      win.addEventListener('click', wink);
+      win.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          wink();
+        }
+      });
+    });
+  }
+
   // ---------- Страница: главная ----------
   function pageHome() {
+    initWindows();
     var list = $('#home-outages');
     if (list) {
       loadOutages().then(function (items) {
