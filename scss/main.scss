@@ -977,9 +977,9 @@ button {
   &__row {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
-    gap: 8px 32px;
+    gap: 0 32px;
   }
 
   p {
@@ -988,6 +988,9 @@ button {
   }
 
   a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: $ink;
     font-weight: 600;
     text-decoration: underline;

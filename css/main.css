@@ -907,9 +907,9 @@ button {
 .strip__row {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 8px 32px;
+  gap: 0 32px;
 }
 
 .strip p {
@@ -918,6 +918,9 @@ button {
 }
 
 .strip a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: #274455;
   font-weight: 600;
   text-decoration: underline;

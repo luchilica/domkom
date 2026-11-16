@@ -93,7 +93,7 @@
   }
 
   /** Показывает в контейнере понятное сообщение, если данные не загрузились (role="alert"). */
-  function showLoadError(container, error) {
+  function showLoadError(container) {
     clear(container);
     var box = el('p', 'muted', 'Не удалось загрузить данные. Обновите страницу или повторите попытку позже.', { role: 'alert' });
     container.appendChild(box);
@@ -297,7 +297,6 @@
   // ---------- Форма заявки (главная и страница «Подать заявку») ----------
   function initRequestForm(form) {
     var confirmBox = $('[data-confirm]');
-    var phoneInput = form.elements.phone;
 
     /** Находит обёртку поля формы по атрибуту data-field. */
     function field(name) {
