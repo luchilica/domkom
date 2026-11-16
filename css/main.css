@@ -1148,6 +1148,8 @@ button {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  min-height: 44px;
+  padding-block: 8px;
   font-size: 0.875rem;
   color: #5A7180;
 }
