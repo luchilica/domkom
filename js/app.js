@@ -816,12 +816,6 @@
       clear(history);
       items.slice(0, 3).forEach(function (r) {
         var li = el('li', 'cab-request');
-        li.style.display = 'flex';
-        li.style.justifyContent = 'space-between';
-        li.style.alignItems = 'center';
-        li.style.gap = '16px';
-        li.style.padding = '14px 0';
-        li.style.borderTop = '1px solid #D5E0E6';
         var box = el('div');
         box.appendChild(el('strong', null, '№ ' + r.id + ' · ' + r.description));
         box.appendChild(el('div', 'timeline__time', fmtDate(r.created)));

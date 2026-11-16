@@ -16,7 +16,7 @@ $panel: #3B5F78;
 $card: #476B84;
 $lime: #C2DB64;
 $lime-press: #A9C444;
-$lime-ink: #5C7A12; // зелёный текст на светлом фоне (4.9:1), вместо лаймового из скриншота
+$lime-ink: #5C7A12; // зелёный текст на светлом фоне (контраст 4.9:1)
 $canvas: #F3F6F8;
 $surface: #FFFFFF;
 $muted: #5A7180;
@@ -60,6 +60,7 @@ $shadow-3: inset rgba(0, 0, 0, 0.4) 0 1px 2px 0;
 @mixin focus-ring {
   outline: 3px solid $focus;
   outline-offset: 3px;
+  box-shadow: 0 0 0 3px #fff;
 }
 
 @mixin card-surface {
@@ -814,11 +815,22 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .loading::before,
   .win__eyes,
   .win.is-wink .win__body,
   .win.is-wink .win__heart {
     animation: none;
   }
+}
+
+// ---------- Последние заявки в кабинете ----------
+.cab-request {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid $line;
 }
 
 // ---------- Секции ----------
