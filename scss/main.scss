@@ -18,7 +18,7 @@ $lime: #C2DB64;
 $lime-press: #A9C444;
 $lime-ink: #5C7A12; // зелёный текст на светлом фоне (контраст 4.9:1)
 $canvas: #F3F6F8;
-$surface: #FFFFFF;
+$surface: #FFF;
 $muted: #5A7180;
 $line: #D5E0E6;
 $on-dark: #C9D8E1;
@@ -376,7 +376,8 @@ button {
 }
 
 .status {
-  @include pill;
+  display: inline-flex;
+  align-items: center;
   border-radius: 6px;
   padding: 4px 14px;
   font-size: 0.875rem;
@@ -1315,7 +1316,8 @@ button {
 
 // ---------- Отключения ----------
 .outage {
-  @include card-surface;
+  background: $surface;
+  box-shadow: $shadow-1;
   display: grid;
   gap: 8px;
   width: 100%;
