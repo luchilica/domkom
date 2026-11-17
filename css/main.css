@@ -1592,6 +1592,17 @@ button {
   padding: 0 8px;
 }
 
+.contact__text {
+  display: grid;
+  gap: 8px;
+}
+
+.contact__address {
+  margin: 0;
+  font-size: 1rem;
+  color: #C9D8E1;
+}
+
 .site-footer {
   background: #1B3342;
   color: #C9D8E1;

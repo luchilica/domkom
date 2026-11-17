@@ -1652,6 +1652,17 @@ button {
     gap: 20px;
     padding: 0 8px;
   }
+
+  &__text {
+    display: grid;
+    gap: 8px;
+  }
+
+  &__address {
+    margin: 0;
+    font-size: 1rem;
+    color: $on-dark;
+  }
 }
 
 .site-footer {
