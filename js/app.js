@@ -214,7 +214,7 @@
     }
   }
 
-  /** Объединяет демонстрационные заявки из data/requests.xml с заявками из localStorage. */
+  /** Объединяет заявки из data/requests.xml с заявками из localStorage. */
   function loadRequests() {
     return loadXML('data/requests.xml').then(function (baseDoc) {
       var items = Array.prototype.map.call(baseDoc.getElementsByTagName('request'), parseRequest);
