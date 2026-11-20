@@ -1,6 +1,16 @@
-# Домовой – городской портал коммунальных услуг (учебный проект)
+# Домовой – городской портал коммунальных услуг
 
-Курсовой проект по предмету «Инструменты разработки веб-ресурсов», гр. ВР311.
+[![Pages](https://github.com/luchilica/domkom/actions/workflows/pages.yml/badge.svg)](https://github.com/luchilica/domkom/actions/workflows/pages.yml)
+[![Lint](https://github.com/luchilica/domkom/actions/workflows/lint.yml/badge.svg)](https://github.com/luchilica/domkom/actions/workflows/lint.yml)
+
+**Сайт:** https://luchilica.github.io/domkom/
+
+![Главная страница сайта «Домовой»](docs/preview.png)
+
+Подача заявок, статус обращений, отключения на карте, тарифы и контакты организаций, личный кабинет. Адаптивная вёрстка от 360 px, доступность по WCAG 2.2 AA.
+
+Курсовой проект (учебный) по предмету «Инструменты разработки веб-ресурсов», гр. ВР311. Данные на страницах вымышленные.
+
 Стек: HTML5, SCSS → CSS3, JavaScript (DOM), XML (папка `data/`), SVG (карта, иконки, логотип), Figma.
 
 ## Запуск
@@ -10,7 +20,7 @@
     npm start          # http://localhost:5173
 
 Открывать нужно через веб-сервер: данные читаются из XML через `fetch`.
-Демо-вход в личный кабинет: логин `demo`, пароль `demo2026` (имитация, данные из `data/user.xml`).
+Вход в личный кабинет (имитация): логин `demo`, пароль `demo2026` (имитация, данные из `data/user.xml`).
 
 ## Страницы (ТЗ, раздел 1.2)
 
@@ -23,6 +33,10 @@
 | Тарифы и справка, контакты | `tariffs.html` | `tariffs.xml`, `contacts.xml` |
 | Личный кабинет (имитация входа) | `cabinet.html` | `user.xml`, `requests.xml`, `outages.xml` |
 | Вспомогательная: ошибка / нет данных | `404.html` | – |
+
+## Публикация
+
+Сайт публикуется на GitHub Pages автоматически при каждой отправке в ветку `main` (`.github/workflows/pages.yml`: сборка CSS, копирование файлов, развёртывание). Включение: Settings → Pages → Build and deployment → Source: GitHub Actions.
 
 ## Контроль качества
 
