@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Демонстрационные заявки. status: new | work | done | rejected -->
+<!-- Учебные заявки. status: new | work | done | rejected -->
 <requests>
   <request id="2026-0412" status="new">
     <created>2026-11-08T08:12</created>

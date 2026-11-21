@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Демонстрационные данные об отключениях. type: emergency | planned; service: water | heat | power -->
+<!-- Учебные данные об отключениях. type: emergency | planned; service: water | heat | power -->
 <outages updated="2026-11-08T14:00:00+03:00">
   <outage id="o1" type="emergency" service="water" district="central">
     <title>Нет холодной воды</title>
