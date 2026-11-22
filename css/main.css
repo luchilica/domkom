@@ -1765,12 +1765,17 @@ button {
 
 .empty-state {
   display: grid;
-  gap: 20px;
-  justify-items: start;
+  gap: 24px;
+  justify-items: center;
+  text-align: center;
 }
 
 .empty-state > * {
   max-width: 640px;
+}
+
+.empty-state .hero__actions {
+  justify-content: center;
 }
 
 .loading {
@@ -1836,12 +1841,12 @@ button {
 }
 
 .empty-state > .n404 {
-  max-width: 760px;
+  max-width: 1040px;
 }
 
 .n404 {
   width: 100%;
-  padding: 32px clamp(16px, 5vw, 48px);
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 5vw, 64px);
   border-radius: 28px;
   background: #274455;
 }
@@ -1849,7 +1854,9 @@ button {
 .n404__art {
   display: block;
   width: 100%;
+  max-width: 720px;
   height: auto;
+  margin-inline: auto;
 }
 
 .n404__lime {
