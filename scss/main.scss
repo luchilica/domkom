@@ -1950,3 +1950,336 @@ button {
     stroke-linecap: round;
   }
 }
+
+// ---------- Кнопка «Крупный шрифт» ----------
+.a11y-toggle {
+  order: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid $on-dark;
+  border-radius: $r-sm;
+  background: transparent;
+  color: $surface;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $surface;
+  }
+
+  &[aria-pressed='true'] {
+    background: $lime;
+    border-color: $lime;
+    color: $ink;
+  }
+
+  @media (min-width: $bp-lg) {
+    order: 3;
+    margin-left: 0;
+  }
+}
+
+// ---------- Крупный режим: шрифт 125 %, меню-гамбургер до 1560 px ----------
+html[data-large] {
+  font-size: 125%;
+}
+
+html[data-large] .muted {
+  color: $ink;
+}
+
+@media (min-width: $bp-lg) and (max-width: 1559px) {
+  html[data-large] .nav-toggle {
+    display: inline-flex;
+  }
+
+  html[data-large] .site-header__cta {
+    display: none;
+  }
+
+  html[data-large] .nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    padding: 8px 16px 24px;
+    background: $ink;
+    border-top: 1px solid $card;
+  }
+
+  html[data-large] .nav[data-open='true'] {
+    display: block;
+  }
+
+  html[data-large] .nav__list {
+    display: grid;
+    gap: 4px;
+  }
+
+  html[data-large] .nav__link {
+    display: block;
+    padding: 12px 8px;
+    min-height: 0;
+    white-space: normal;
+  }
+
+  html[data-large] .nav__item--cabinet {
+    display: block;
+  }
+
+  html[data-large] .a11y-toggle {
+    order: 0;
+    margin-left: auto;
+  }
+}
+
+// ---------- Главная: «Что у вашего дома» ----------
+.my-home-section {
+  padding-top: 40px;
+  padding-bottom: 0;
+
+  @media (min-width: $bp-md) {
+    padding-top: 64px;
+    padding-bottom: 0;
+  }
+}
+
+.my-home {
+  display: grid;
+  gap: 24px;
+
+  @media (min-width: $bp-md) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    column-gap: 48px;
+    align-items: center;
+  }
+
+  &__intro {
+    display: grid;
+    gap: 12px;
+  }
+
+  &__form {
+    display: grid;
+    gap: 14px;
+  }
+
+  &__result {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 20px;
+  }
+
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+
+    .icon {
+      flex: none;
+      width: 1.5rem;
+      height: 1.5rem;
+      color: $lime-ink;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  }
+
+  &__card {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 20px;
+    border: 1.5px solid $line;
+    border-radius: $r-md;
+    background: $canvas;
+  }
+
+  &__card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .icon {
+      flex: none;
+      color: $link;
+    }
+  }
+
+  &__row {
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+  }
+
+  &__ok {
+    font-weight: 500;
+    color: $st-done;
+  }
+
+  &__link {
+    font-weight: 500;
+  }
+
+  .btn {
+    justify-self: start;
+  }
+}
+
+// ---------- Форма заявки: «У меня то же самое» и диктовка ----------
+.similar {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px solid $st-new;
+  border-radius: $r-md;
+  background: #EAF3F9;
+
+  &__title {
+    font-weight: 600;
+  }
+
+  &__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border-radius: $r-sm;
+    background: $surface;
+  }
+
+  &__text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__meta {
+    font-size: 0.875rem;
+  }
+
+  &__done {
+    font-weight: 500;
+    color: $st-done;
+  }
+}
+
+.voice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+
+  &__status {
+    font-size: 0.875rem;
+  }
+}
+
+// ---------- Тарифы: калькулятор ----------
+.calc {
+  display: grid;
+  gap: 20px;
+
+  &__form {
+    display: grid;
+    gap: 16px;
+  }
+
+  &__meter {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 16px;
+    border: 1.5px solid $line;
+    border-radius: $r-md;
+
+    @media (min-width: $bp-sm) {
+      grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+      align-items: end;
+    }
+
+    .field__error {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__legend {
+    font-weight: 600;
+    padding-bottom: 12px;
+
+    @media (min-width: $bp-sm) {
+      padding-bottom: 12px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__result {
+    display: grid;
+    gap: 12px;
+  }
+
+  &__total {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  &__note {
+    padding: 12px 16px;
+    border-radius: $r-sm;
+    background: $canvas;
+  }
+
+  &__note--warn {
+    background: #FBEDEA;
+    color: #7A2A1D;
+    font-weight: 500;
+  }
+}
+
+// Очень узкие экраны в крупном режиме: длинные слова в таблицах переносятся
+.data-table td,
+.data-table th {
+  overflow-wrap: anywhere;
+}
+
+.split > *,
+.stack > * {
+  min-width: 0;
+}
+
+@media (max-width: 899px) {
+  .data-table td,
+  .data-table td:nth-child(2),
+  .data-table td.data-table__id {
+    white-space: normal;
+  }
+}

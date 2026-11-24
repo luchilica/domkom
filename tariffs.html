@@ -22,6 +22,9 @@
           <span class="logo__tag">коммунальные услуги города</span>
         </span>
       </a>
+      <button class="a11y-toggle" id="a11y-toggle" type="button" aria-pressed="false" aria-label="Крупный шрифт">
+        <span aria-hidden="true">Аа</span>
+      </button>
       <button class="nav-toggle" id="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню">
         <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-menu"></use></svg>
       </button>
@@ -54,6 +57,41 @@
             <tbody id="tariff-body"><tr><td colspan="4">Загрузка…</td></tr></tbody>
           </table>
         </div>
+        <section class="panel-card calc" aria-labelledby="calc-title">
+          <h2 class="h3" id="calc-title">Рассчитать платёж по показаниям</h2>
+          <p class="muted">Введите прошлые и текущие показания счётчиков, и мы посчитаем сумму по тарифам из таблицы выше. Если расход резко вырос по сравнению с прошлым месяцем, вы увидите предупреждение.</p>
+          <form class="calc__form" id="calc-form" novalidate aria-label="Калькулятор платежа">
+            <div class="calc__meter" role="group" aria-label="Холодная вода, м³">
+              <p class="calc__legend">Холодная вода, м³</p>
+              <div class="field"><label class="field__label" for="cold-prev">Было</label><input class="field__control" id="cold-prev" name="cold-prev" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <div class="field"><label class="field__label" for="cold-now">Стало</label><input class="field__control" id="cold-now" name="cold-now" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <p class="field__error" data-err="cold" role="alert" hidden></p>
+            </div>
+            <div class="calc__meter" role="group" aria-label="Горячая вода, м³">
+              <p class="calc__legend">Горячая вода, м³</p>
+              <div class="field"><label class="field__label" for="hot-prev">Было</label><input class="field__control" id="hot-prev" name="hot-prev" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <div class="field"><label class="field__label" for="hot-now">Стало</label><input class="field__control" id="hot-now" name="hot-now" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <p class="field__error" data-err="hot" role="alert" hidden></p>
+            </div>
+            <div class="calc__meter" role="group" aria-label="Электроэнергия, кВт·ч">
+              <p class="calc__legend">Электроэнергия, кВт·ч</p>
+              <div class="field"><label class="field__label" for="power-prev">Было</label><input class="field__control" id="power-prev" name="power-prev" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <div class="field"><label class="field__label" for="power-now">Стало</label><input class="field__control" id="power-now" name="power-now" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+              <p class="field__error" data-err="power" role="alert" hidden></p>
+            </div>
+            <div class="field calc__area">
+              <label class="field__label" for="area">Площадь квартиры, м² (для содержания жилья)</label>
+              <input class="field__control" id="area" name="area" type="text" inputmode="decimal" autocomplete="off" placeholder="54,5">
+              <p class="field__error" data-err="area" role="alert" hidden></p>
+            </div>
+            <div class="calc__actions">
+              <button class="btn" type="submit">Рассчитать</button>
+              <button class="chip" id="calc-save" type="button">Запомнить показания</button>
+            </div>
+            <p class="muted" id="calc-saved" role="status" hidden></p>
+          </form>
+          <div class="calc__result" id="calc-result" aria-live="polite" hidden></div>
+        </section>
         <div class="info-cards">
           <article class="info-card"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-gauge"></use></svg><h2 class="h4">Передача показаний</h2><p>Передайте показания приборов учёта через ЕРИП или в личном кабинете – в сроки, указанные организацией.</p></article>
           <article class="info-card"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-clock"></use></svg><h2 class="h4">Сроки оплаты</h2><p>Оплачивайте счета вовремя: срок указан в платёжном документе. Подробности – в справке организации.</p></article>

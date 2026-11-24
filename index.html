@@ -22,6 +22,9 @@
           <span class="logo__tag">коммунальные услуги города</span>
         </span>
       </a>
+      <button class="a11y-toggle" id="a11y-toggle" type="button" aria-pressed="false" aria-label="Крупный шрифт">
+        <span aria-hidden="true">Аа</span>
+      </button>
       <button class="nav-toggle" id="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню">
         <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#i-menu"></use></svg>
       </button>
@@ -108,6 +111,26 @@
           <path class="win__heart" d="M0 4C-7 -1-4-7 0-3C4-7 7-1 0 4z"/>
         </g>
       </svg>
+    </section>
+
+    <section class="section my-home-section" id="my-home" aria-labelledby="my-home-title">
+      <div class="container">
+        <div class="panel-card my-home">
+          <div class="my-home__intro">
+            <h2 class="h2" id="my-home-title">Что у вашего дома</h2>
+            <p class="lead muted" id="my-home-lead">Введите адрес один раз, и мы покажем отключения и заявки рядом с вами. Регистрация не нужна, адрес остаётся на этом устройстве.</p>
+          </div>
+          <form class="my-home__form" id="my-home-form" novalidate>
+            <div class="field">
+              <label class="field__label" for="my-home-input">Улица и дом</label>
+              <input class="field__control" id="my-home-input" name="home" type="text" autocomplete="street-address" placeholder="ул. Примерная, 12" aria-describedby="my-home-error">
+              <p class="field__error" id="my-home-error" role="alert" hidden></p>
+            </div>
+            <button class="btn" type="submit">Показать</button>
+          </form>
+          <div class="my-home__result" id="my-home-result" aria-live="polite" hidden></div>
+        </div>
+      </div>
     </section>
 
     <section class="section section--split" aria-labelledby="services-title">

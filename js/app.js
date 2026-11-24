@@ -183,7 +183,9 @@
       address: childText(node, 'address'),
       description: childText(node, 'description'),
       events: events,
-      local: node.getAttribute('local') === 'true'
+      local: node.getAttribute('local') === 'true',
+      owner: node.getAttribute('owner') || 'me',
+      supporters: parseInt(childText(node, 'supporters'), 10) || 0
     };
   }
 
@@ -364,6 +366,22 @@
       });
     });
 
+    // «Мой адрес»: подставляем сохранённый адрес, если поле пустое
+    var savedAddress = readStore(ADDR_KEY);
+    if (savedAddress && form.elements.address && !form.elements.address.value) {
+      form.elements.address.value = savedAddress;
+    }
+    // подсказка «У меня то же самое» и диктовка описания
+    var checkSimilar = initSimilar(form, function () { return value('address'); }, function () { return value('category'); }, field('address'));
+    if (form.elements.address) {
+      form.elements.address.addEventListener('input', checkSimilar);
+    }
+    $$('[name=category]', form).forEach(function (control) {
+      control.addEventListener('change', checkSimilar);
+    });
+    checkSimilar();
+    initVoice(form);
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       var errors = validate();
@@ -392,6 +410,7 @@
             submit.removeAttribute('aria-busy');
             submit.disabled = false;
             form.reset();
+            checkSimilar();
             if (confirmBox) {
               $('[data-confirm-id]', confirmBox).textContent = id;
               confirmBox.hidden = false;
@@ -464,6 +483,7 @@
   // ---------- Страница: главная ----------
   function pageHome() {
     initWindows();
+    initMyHome();
     var list = $('#home-outages');
     if (list) {
       loadOutages().then(function (items) {
@@ -511,6 +531,8 @@
     var select = $('#saved-address');
     var addressInput = $('#address');
     if (select && addressInput) {
+      var mine = readStore(ADDR_KEY);
+      if (mine) select.appendChild(el('option', null, mine + ' (мой адрес)', { value: mine }));
       loadXML('data/user.xml').then(function (doc) {
         Array.prototype.forEach.call(doc.getElementsByTagName('address'), function (a) {
           var label = a.getAttribute('street') + ', ' + a.getAttribute('house') + ', кв. ' + a.getAttribute('flat');
@@ -659,6 +681,11 @@
       details.appendChild(el('h2', 'h3', 'Заявка № ' + r.id));
       details.appendChild(statusBadge(r.status));
       details.appendChild(el('p', 'muted', (CATEGORY[r.category] || r.category) + '. ' + r.description + ' – ' + r.address));
+      if (r.owner === 'other') {
+        details.appendChild(el('p', null, 'Вы присоединились к заявке соседа. Новую заявку подавать не нужно.'));
+      } else if (r.supporters) {
+        details.appendChild(el('p', null, 'К заявке присоединились соседей: ' + r.supporters + '.'));
+      }
       var ol = el('ol', 'timeline');
       r.events.forEach(function (ev) {
         var li = el('li');
@@ -687,7 +714,7 @@
           ['', '№ ' + r.id, 'data-table__id'],
           ['Дата и время', fmtFull(r.created)],
           ['Категория', CATEGORY[r.category] || r.category],
-          ['Описание', r.description + (r.local ? ' (новая)' : '')]
+          ['Описание', r.description + (r.local ? ' (новая)' : '') + (r.owner === 'other' ? ' (вы присоединились)' : '')]
         ];
         cells.forEach(function (c) {
           tr.appendChild(el('td', c[2] || '', c[1], { 'data-label': c[0] }));
@@ -729,8 +756,8 @@
     });
 
     loadRequests().then(function (items) {
-      all = items;
-      state.selected = items.length ? items[0].id : null;
+      all = mineOnly(items);
+      state.selected = all.length ? all[0].id : null;
       render();
     }).catch(function (e) {
       showLoadError(body.parentNode.parentNode, e);
@@ -757,6 +784,7 @@
         showLoadError(orgs, e);
       });
     }
+    var prices = {};
     loadXML('data/tariffs.xml').then(function (doc) {
       var root = doc.documentElement;
       var currency = root.getAttribute('currency') || 'BYN';
@@ -769,7 +797,9 @@
         tr.appendChild(el('td', 'data-table__id', childText(t, 'price'), { 'data-label': 'Тариф, ' + currency }));
         tr.appendChild(el('td', 'muted', childText(t, 'note'), { 'data-label': 'Примечание' }));
         body.appendChild(tr);
+        prices[t.getAttribute('id')] = parseFloat(childText(t, 'price').replace(',', '.')) || 0;
       });
+      initCalc(prices);
     }).catch(function (e) {
       showLoadError(body.parentNode.parentNode, e);
     });
@@ -814,7 +844,7 @@
     var history = $('#cab-requests');
     loadRequests().then(function (items) {
       clear(history);
-      items.slice(0, 3).forEach(function (r) {
+      mineOnly(items).slice(0, 3).forEach(function (r) {
         var li = el('li', 'cab-request');
         var box = el('div');
         box.appendChild(el('strong', null, '№ ' + r.id + ' · ' + r.description));
@@ -897,6 +927,528 @@
     render();
   }
 
+  // ---------- Мелкие настройки пользователя (localStorage с запасным вариантом в памяти) ----------
+  var ADDR_KEY = 'domovoy.address.v1';
+  var JOIN_KEY = 'domovoy.joins.v1';
+  var METER_KEY = 'domovoy.meters.v1';
+  var LARGE_KEY = 'domovoy.large.v1';
+  var memory = {};
+
+  /** Читает строку из хранилища; если оно недоступно, берёт значение из памяти страницы. */
+  function readStore(key) {
+    try {
+      var v = window.localStorage.getItem(key);
+      return v === null ? (memory[key] || '') : v;
+    } catch (e) {
+      return memory[key] || '';
+    }
+  }
+
+  /** Записывает строку (пустая строка удаляет ключ). */
+  function writeStore(key, value) {
+    memory[key] = value;
+    try {
+      if (value) window.localStorage.setItem(key, value);
+      else window.localStorage.removeItem(key);
+    } catch (e) {
+      /* приватный режим: значение живёт до перезагрузки */
+    }
+  }
+
+  function readJSON(key, fallback) {
+    try {
+      return JSON.parse(readStore(key)) || fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  // ---------- Адреса: разбор и сравнение ----------
+  /** Приводит название улицы к сравнимому виду: без «ул.», «пр-т», регистра и «ё». */
+  function normStreet(text) {
+    return String(text).toLowerCase().replace(/ё/g, 'е')
+      .replace(/(^|[\s.,])(улица|ул|проспект|пр-т|пр|переулок|пер|бульвар|б-р)(?=[\s.,]|$)/g, ' ')
+      .replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  /** Разбирает «ул. Примерная, 12–18, кв. 3» в улицу и диапазон домов; null, если дома нет. */
+  function parseAddress(text) {
+    var t = String(text || '').trim();
+    var m = /^(.*?),\s*(?:д\.?\s*)?(\d+)\s*(?:[–-]\s*(\d+))?/.exec(t) || /^(.*?)\s+(\d+)\s*(?:[–-]\s*(\d+))?/.exec(t);
+    if (!m || !normStreet(m[1])) return null;
+    var from = parseInt(m[2], 10);
+    return { street: normStreet(m[1]), from: from, to: m[3] ? parseInt(m[3], 10) : from };
+  }
+
+  /** Истина, если два адреса на одной улице и их диапазоны домов пересекаются. */
+  function sameHouse(a, b) {
+    return !!a && !!b && a.street === b.street && a.from <= b.to && b.from <= a.to;
+  }
+
+  /** Читает номера заявок, к которым присоединился пользователь. */
+  function joinedIds() {
+    return readJSON(JOIN_KEY, []);
+  }
+
+  function isJoined(id) {
+    return joinedIds().indexOf(id) !== -1;
+  }
+
+  function setJoined(id, on) {
+    var list = joinedIds().filter(function (x) { return x !== id; });
+    if (on) list.push(id);
+    writeStore(JOIN_KEY, JSON.stringify(list));
+  }
+
+  /** Заявки пользователя: свои и те, к которым он присоединился. */
+  function mineOnly(items) {
+    return items.filter(function (r) { return r.owner !== 'other' || isJoined(r.id); });
+  }
+
+  // ---------- Главная: «Что у вашего дома» ----------
+  function initMyHome() {
+    var form = $('#my-home-form');
+    var input = $('#my-home-input');
+    var errorBox = $('#my-home-error');
+    var result = $('#my-home-result');
+    var lead = $('#my-home-lead');
+    if (!form || !input || !result) return;
+    var data = null;
+
+    /** Загружает отключения и заявки один раз. */
+    function load() {
+      if (!data) {
+        data = Promise.all([
+          loadOutages().catch(function () { return []; }),
+          loadRequests().catch(function () { return []; })
+        ]);
+      }
+      return data;
+    }
+
+    /** Карточка результата: заголовок, иконка и содержимое. */
+    function card(iconName, title) {
+      var box = el('article', 'my-home__card');
+      var head = el('h3', 'h4 my-home__card-title');
+      head.appendChild(icon(iconName));
+      head.appendChild(document.createTextNode(title));
+      box.appendChild(head);
+      return box;
+    }
+
+    /** Показывает результат для сохранённого адреса. */
+    function show(address) {
+      var parsed = parseAddress(address);
+      load().then(function (pair) {
+        var outages = pair[0].filter(function (o) { return sameHouse(parsed, parseAddress(o.address)); });
+        var requests = pair[1].filter(function (r) {
+          return sameHouse(parsed, parseAddress(r.address));
+        });
+        var own = requests.filter(function (r) { return r.owner !== 'other'; });
+        var neighbours = requests.filter(function (r) { return r.owner === 'other' && (r.status === 'new' || r.status === 'work'); });
+
+        clear(result);
+        var bar = el('div', 'my-home__bar');
+        var who = el('p', 'my-home__address');
+        who.appendChild(icon('pin'));
+        who.appendChild(el('strong', null, address));
+        bar.appendChild(who);
+        var change = el('button', 'chip', 'Изменить', { type: 'button' });
+        var forget = el('button', 'chip', 'Забыть адрес', { type: 'button' });
+        change.addEventListener('click', function () {
+          edit(address);
+        });
+        forget.addEventListener('click', function () {
+          writeStore(ADDR_KEY, '');
+          input.value = '';
+          edit('');
+          input.focus();
+        });
+        var tools = el('div', 'chips');
+        tools.appendChild(change);
+        tools.appendChild(forget);
+        bar.appendChild(tools);
+        result.appendChild(bar);
+
+        var grid = el('div', 'my-home__grid');
+
+        var cOut = card('bolt', 'Отключения');
+        if (outages.length) {
+          outages.forEach(function (o) {
+            var row = el('div', 'my-home__row');
+            row.appendChild(statusBadge(o.type, TYPE[o.type]));
+            row.appendChild(el('strong', null, o.title));
+            row.appendChild(el('span', 'muted', fmtPeriod(o.from, o.to)));
+            cOut.appendChild(row);
+          });
+          cOut.appendChild(el('a', 'my-home__link', 'Посмотреть на карте', { href: 'outages.html' }));
+        } else {
+          cOut.appendChild(el('p', 'my-home__ok', 'На вашем адресе отключений нет.'));
+        }
+        grid.appendChild(cOut);
+
+        var cReq = card('doc', 'Ваши заявки');
+        if (own.length) {
+          own.slice(0, 3).forEach(function (r) {
+            var row = el('div', 'my-home__row');
+            row.appendChild(statusBadge(r.status));
+            row.appendChild(el('strong', null, '№ ' + r.id));
+            row.appendChild(el('span', 'muted', r.description));
+            cReq.appendChild(row);
+          });
+          cReq.appendChild(el('a', 'my-home__link', 'Все заявки', { href: 'requests.html' }));
+        } else {
+          cReq.appendChild(el('p', 'my-home__ok', 'По этому дому ваших заявок нет.'));
+        }
+        grid.appendChild(cReq);
+
+        var cNb = card('home', 'В вашем доме');
+        if (neighbours.length) {
+          cNb.appendChild(el('p', null, 'Соседи уже сообщили о проблемах: ' + neighbours.length + '. Если у вас то же самое, присоединитесь к заявке, а не создавайте дубль.'));
+        } else {
+          cNb.appendChild(el('p', 'muted', 'Открытых заявок соседей нет. Если что-то случилось, сообщите нам.'));
+        }
+        cNb.appendChild(el('a', 'btn btn--small', 'Подать заявку', { href: 'request.html' }));
+        grid.appendChild(cNb);
+
+        result.appendChild(grid);
+        result.hidden = false;
+        form.hidden = true;
+        if (lead) lead.textContent = 'Сводка по вашему дому. Адрес хранится только на этом устройстве.';
+      });
+    }
+
+    /** Возвращает форму ввода адреса. */
+    function edit(value) {
+      result.hidden = true;
+      form.hidden = false;
+      input.value = value;
+      errorBox.hidden = true;
+      if (lead) lead.textContent = 'Введите адрес один раз, и мы покажем отключения и заявки рядом с вами. Регистрация не нужна, адрес остаётся на этом устройстве.';
+      if (value) input.focus();
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var value = input.value.trim();
+      if (!parseAddress(value)) {
+        errorBox.textContent = 'Укажите улицу и номер дома, например: ул. Примерная, 12';
+        errorBox.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      errorBox.hidden = true;
+      input.removeAttribute('aria-invalid');
+      writeStore(ADDR_KEY, value);
+      show(value);
+    });
+
+    var saved = readStore(ADDR_KEY);
+    if (saved && parseAddress(saved)) show(saved);
+  }
+
+  // ---------- Форма заявки: «У меня то же самое» ----------
+  function initSimilar(form, getAddress, getCategory, addressWrap) {
+    if (!addressWrap) return function () {};
+    var box = el('div', 'similar', null, { 'aria-live': 'polite' });
+    box.hidden = true;
+    addressWrap.parentNode.insertBefore(box, addressWrap.nextSibling);
+    var cache = null;
+    var timer = 0;
+
+    function load() {
+      if (!cache) cache = loadRequests().catch(function () { return []; });
+      return cache;
+    }
+
+    /** Строка одной похожей заявки с кнопкой присоединения. */
+    function row(r, extra) {
+      var item = el('div', 'similar__item');
+      var text = el('div', 'similar__text');
+      text.appendChild(el('strong', null, '№ ' + r.id + ' · ' + r.description));
+      var meta = el('span', 'muted similar__meta');
+      var flat = /кв\.?\s*\d+/i.exec(r.address);
+      meta.textContent = (flat ? flat[0] + ' · ' : '') + (STATUS[r.status] || r.status) + ' · присоединились: ' + (r.supporters + (isJoined(r.id) ? 1 : 0));
+      text.appendChild(meta);
+      item.appendChild(text);
+      var btn = el('button', 'chip', '', { type: 'button', 'aria-pressed': isJoined(r.id) ? 'true' : 'false' });
+      btn.textContent = isJoined(r.id) ? 'Вы присоединились' : 'У меня то же самое';
+      btn.addEventListener('click', function () {
+        setJoined(r.id, !isJoined(r.id));
+        extra();
+      });
+      item.appendChild(btn);
+      return item;
+    }
+
+    function update() {
+      var addr = parseAddress(getAddress());
+      var category = getCategory();
+      if (!addr || !category) {
+        box.hidden = true;
+        return;
+      }
+      load().then(function (items) {
+        var found = items.filter(function (r) {
+          return r.owner === 'other' && (r.status === 'new' || r.status === 'work') && r.category === category && sameHouse(addr, parseAddress(r.address));
+        });
+        clear(box);
+        if (!found.length) {
+          box.hidden = true;
+          return;
+        }
+        box.appendChild(el('p', 'similar__title', 'Похожая заявка уже есть в вашем доме'));
+        box.appendChild(el('p', 'muted', 'Присоединитесь к ней, и новую подавать не нужно: статус появится в разделе «Мои заявки».'));
+        found.forEach(function (r) {
+          box.appendChild(row(r, update));
+        });
+        if (found.some(function (r) { return isJoined(r.id); })) {
+          box.appendChild(el('p', 'similar__done', 'Готово: вы присоединились. Если у вас другая проблема, отправьте форму как обычно.', { role: 'status' }));
+        }
+        box.hidden = false;
+      });
+    }
+
+    return function schedule() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(update, 200);
+    };
+  }
+
+  // ---------- Форма заявки: диктовка описания ----------
+  function initVoice(form) {
+    var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var area = form.elements.description;
+    if (!Recognition || !area) return;
+    var wrap = area.parentNode;
+    var bar = el('div', 'voice');
+    var btn = el('button', 'chip', 'Продиктовать', { type: 'button', 'aria-pressed': 'false' });
+    var status = el('span', 'voice__status muted', '', { role: 'status' });
+    bar.appendChild(btn);
+    bar.appendChild(status);
+    wrap.appendChild(bar);
+    var rec = null;
+    var base = '';
+
+    function stop() {
+      if (rec) rec.stop();
+    }
+
+    function finish(message) {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.textContent = 'Продиктовать';
+      status.textContent = message || '';
+      rec = null;
+    }
+
+    btn.addEventListener('click', function () {
+      if (rec) {
+        stop();
+        return;
+      }
+      rec = new Recognition();
+      rec.lang = 'ru-RU';
+      rec.interimResults = true;
+      rec.continuous = true;
+      base = area.value.trim();
+      rec.onresult = function (event) {
+        var text = '';
+        for (var i = 0; i < event.results.length; i++) text += event.results[i][0].transcript;
+        area.value = (base ? base + ' ' : '') + text.trim();
+        area.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      rec.onerror = function (event) {
+        finish(event.error === 'not-allowed' ? 'Нет доступа к микрофону: разрешите его в настройках браузера.' : 'Не удалось распознать речь. Попробуйте ещё раз или введите текст.');
+      };
+      rec.onend = function () {
+        if (rec) finish('');
+      };
+      try {
+        rec.start();
+        btn.setAttribute('aria-pressed', 'true');
+        btn.textContent = 'Остановить';
+        status.textContent = 'Слушаю: говорите, затем нажмите «Остановить».';
+      } catch (e) {
+        finish('Не удалось включить микрофон.');
+      }
+    });
+  }
+
+  // ---------- Крупный режим ----------
+  function initLarge() {
+    var btn = $('#a11y-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+
+    function apply(on) {
+      if (on) root.setAttribute('data-large', 'true');
+      else root.removeAttribute('data-large');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+
+    apply(readStore(LARGE_KEY) === '1');
+    btn.addEventListener('click', function () {
+      var on = root.getAttribute('data-large') !== 'true';
+      apply(on);
+      writeStore(LARGE_KEY, on ? '1' : '');
+    });
+  }
+
+  // ---------- Тарифы: калькулятор по показаниям ----------
+  function initCalc(prices) {
+    var form = $('#calc-form');
+    var result = $('#calc-result');
+    var saveBtn = $('#calc-save');
+    if (!form || !result) return;
+    var METERS = [
+      { id: 'cold', name: 'Холодная вода', unit: 'м³', tariff: 't1', sewer: true, min: 2 },
+      { id: 'hot', name: 'Горячая вода', unit: 'м³', tariff: 't3', sewer: true, min: 1 },
+      { id: 'power', name: 'Электроэнергия', unit: 'кВт·ч', tariff: 't5', sewer: false, min: 40 }
+    ];
+    var last = null;
+
+    function num(text) {
+      var s = String(text).trim().replace(/\s/g, '').replace(',', '.');
+      return s === '' ? null : /^\d+(\.\d+)?$/.test(s) ? parseFloat(s) : NaN;
+    }
+
+    function money(n) {
+      return n.toFixed(2).replace('.', ',');
+    }
+
+    function qty(n) {
+      return String(Math.round(n * 100) / 100).replace('.', ',');
+    }
+
+    function setErr(id, message) {
+      var p = $('[data-err="' + id + '"]', form);
+      if (p) {
+        p.textContent = message || '';
+        p.hidden = !message;
+      }
+    }
+
+    // подставляем в «Было» последние сохранённые показания
+    var stored = readJSON(METER_KEY, null);
+    if (stored && stored.readings) {
+      METERS.forEach(function (m) {
+        if (stored.readings[m.id] !== undefined && form.elements[m.id + '-prev']) {
+          form.elements[m.id + '-prev'].value = String(stored.readings[m.id]).replace('.', ',');
+        }
+      });
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var lines = [];
+      var notes = [];
+      var readings = {};
+      var usage = {};
+      var ok = true;
+      var sewerQty = 0;
+      METERS.forEach(function (m) {
+        var a = num(form.elements[m.id + '-prev'].value);
+        var b = num(form.elements[m.id + '-now'].value);
+        setErr(m.id, '');
+        if (a === null && b === null) return;
+        if (a === null || b === null || isNaN(a) || isNaN(b)) {
+          setErr(m.id, 'Введите оба показания числами, например 125,4');
+          ok = false;
+          return;
+        }
+        if (b < a) {
+          setErr(m.id, 'Текущее показание меньше прошлого: проверьте цифры');
+          ok = false;
+          return;
+        }
+        var used = Math.round((b - a) * 1000) / 1000;
+        readings[m.id] = b;
+        usage[m.id] = used;
+        lines.push({ name: m.name, qty: used, unit: m.unit, price: prices[m.tariff] || 0 });
+        if (m.sewer) sewerQty += used;
+        var before = stored && stored.usage ? stored.usage[m.id] : undefined;
+        if (before !== undefined && before > 0) {
+          var change = Math.round(((used - before) / before) * 100);
+          if (used > before * 1.5 && used - before >= m.min) {
+            notes.push({ warn: true, text: m.name + ': расход вырос на ' + change + ' % (было ' + qty(before) + ', стало ' + qty(used) + ' ' + m.unit + '). Проверьте показания, краны и приборы: возможна утечка.' });
+          } else {
+            notes.push({ warn: false, text: m.name + ': ' + (change > 0 ? '+' : '') + change + ' % к прошлому месяцу (' + qty(before) + ' ' + m.unit + ').' });
+          }
+        }
+      });
+      var area = num(form.elements.area.value);
+      setErr('area', '');
+      if (isNaN(area)) {
+        setErr('area', 'Площадь укажите числом, например 54,5');
+        ok = false;
+      } else if (area) {
+        lines.push({ name: 'Содержание жилья', qty: area, unit: 'м²', price: prices.t6 || 0 });
+      }
+      if (!ok) return;
+      if (!lines.length) {
+        setErr('area', 'Введите показания хотя бы одного счётчика или площадь');
+        return;
+      }
+      if (sewerQty > 0) lines.splice(Math.min(lines.length, 2), 0, { name: 'Водоотведение', qty: sewerQty, unit: 'м³', price: prices.t2 || 0 });
+      last = { readings: readings, usage: usage };
+
+      clear(result);
+      var table = el('table', 'data-table');
+      var head = el('tr');
+      ['Услуга', 'Объём', 'Тариф', 'Сумма'].forEach(function (h) {
+        head.appendChild(el('th', null, h, { scope: 'col' }));
+      });
+      table.appendChild(el('caption', 'visually-hidden', 'Расчёт платежа'));
+      var thead = el('thead');
+      thead.appendChild(head);
+      table.appendChild(thead);
+      var tbody = el('tbody');
+      var total = 0;
+      lines.forEach(function (l) {
+        var sum = Math.round(l.qty * l.price * 100) / 100;
+        total += sum;
+        var tr = el('tr');
+        tr.appendChild(el('td', 'data-table__id', l.name, { 'data-label': 'Услуга' }));
+        tr.appendChild(el('td', null, qty(l.qty) + ' ' + l.unit, { 'data-label': 'Объём' }));
+        tr.appendChild(el('td', null, money(l.price), { 'data-label': 'Тариф' }));
+        tr.appendChild(el('td', 'data-table__id', money(sum), { 'data-label': 'Сумма' }));
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      var wrap = el('div', 'table-wrap');
+      wrap.appendChild(table);
+      result.appendChild(wrap);
+      result.appendChild(el('p', 'calc__total', 'К оплате: ' + money(total) + ' BYN'));
+      notes.forEach(function (n) {
+        result.appendChild(el('p', n.warn ? 'calc__note calc__note--warn' : 'calc__note', n.text));
+      });
+      if (!notes.length) {
+        result.appendChild(el('p', 'calc__note', 'Нажмите «Запомнить показания»: в следующем месяце сайт сравнит расход с этим и предупредит о резком скачке.'));
+      }
+      result.appendChild(el('p', 'muted', 'Отопление считается по нормативу и здесь не учтено. Расчёт ориентировочный.'));
+      result.hidden = false;
+      if (saveBtn) saveBtn.disabled = false;
+    });
+
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.addEventListener('click', function () {
+        if (!last) return;
+        var prev = readJSON(METER_KEY, { readings: {}, usage: {} });
+        Object.keys(last.readings).forEach(function (k) { prev.readings[k] = last.readings[k]; });
+        Object.keys(last.usage).forEach(function (k) { prev.usage[k] = last.usage[k]; });
+        writeStore(METER_KEY, JSON.stringify(prev));
+        stored = prev;
+        var msg = $('#calc-saved');
+        if (msg) {
+          msg.textContent = 'Показания сохранены на этом устройстве. В следующий раз поле «Было» заполнится само.';
+          msg.hidden = false;
+        }
+      });
+    }
+  }
+
   // ---------- Запуск ----------
   var pages = {
     home: pageHome,
@@ -909,6 +1461,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initNav();
+    initLarge();
     var handler = pages[document.body.getAttribute('data-page')];
     if (handler) handler();
   });
