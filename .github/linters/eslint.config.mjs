@@ -7,7 +7,7 @@ export default [
       sourceType: 'script',
       globals: {
         window: 'readonly', document: 'readonly', fetch: 'readonly', DOMParser: 'readonly',
-        XMLSerializer: 'readonly', Event: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly',
+        XMLSerializer: 'readonly', Event: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly', IntersectionObserver: 'readonly', Math: 'readonly',
         localStorage: 'readonly', Promise: 'readonly', console: 'readonly'
       }
     },

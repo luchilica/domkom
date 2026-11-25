@@ -1296,6 +1296,7 @@ button {
 }
 
 .map {
+  position: relative;
   overflow: hidden;
   border-radius: 28px;
   background: #DCE6EC;
@@ -1304,6 +1305,67 @@ button {
 .map svg {
   width: 100%;
   height: auto;
+}
+
+.map__tiles {
+  filter: saturate(0.7);
+}
+
+.map svg.is-interactive {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.map svg.is-drag {
+  cursor: grabbing;
+}
+
+.map__ctrl {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.map__btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #FFF;
+  color: #274455;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: rgba(39, 68, 85, 0.1) 0 0 0 1px;
+}
+
+.map__btn:hover {
+  background: #C2DB64;
+}
+
+.map__note {
+  padding: 10px 16px;
+  background: #FFF;
+  font-size: 0.875rem;
+  color: #5A7180;
+}
+
+.map__attr {
+  padding: 0 16px;
+  background: #FFF;
+  font-size: 0.875rem;
+  color: #5A7180;
+}
+
+.map__attr a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .map__marker {

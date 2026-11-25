@@ -152,9 +152,9 @@
       from: period ? period.getAttribute('from') : '',
       to: period ? period.getAttribute('to') : '',
       reason: childText(node, 'reason'),
-      x: map ? Number(map.getAttribute('x')) : 0,
-      y: map ? Number(map.getAttribute('y')) : 0,
-      r: map ? Number(map.getAttribute('r')) : 40
+      lat: map ? Number(map.getAttribute('lat')) : 0,
+      lon: map ? Number(map.getAttribute('lon')) : 0,
+      r: map ? Number(map.getAttribute('r')) : 100
     };
   }
 
@@ -522,6 +522,29 @@
     }
     var form = $('[data-request-form]');
     if (form) initRequestForm(form);
+    initOfficeMap();
+  }
+
+  /** Карта с меткой офиса: плитки запрашиваются, когда блок приближается к экрану. */
+  function initOfficeMap() {
+    var svg = $('#office-map');
+    if (!svg) return;
+    function build() {
+      var map = createTileMap(svg, { interactive: false, zoom: 16 });
+      map.setMarkers([{ fixed: true, lat: 53.9006, lon: 27.559 }]);
+      map.setView(53.9006, 27.559, 16);
+    }
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) {
+          observer.disconnect();
+          build();
+        }
+      }, { rootMargin: '300px' });
+      observer.observe(svg);
+    } else {
+      build();
+    }
   }
 
   // ---------- Страница: подать заявку ----------
@@ -550,10 +573,266 @@
     }
   }
 
+  // ---------- Карта: подложка из тайлов OpenStreetMap в SVG, маркеры и управление на JavaScript ----------
+  var TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var TILE = 256;
+
+  /** Долгота и широта -> доля мира (0..1) в проекции Web Mercator. */
+  function toWorld(lat, lon) {
+    var sin = Math.sin(lat * Math.PI / 180);
+    return { u: (lon + 180) / 360, v: 0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI) };
+  }
+
+  /** Широта по доле мира v. */
+  function latOf(v) {
+    return Math.atan(Math.sinh(Math.PI * (1 - 2 * v))) * 180 / Math.PI;
+  }
+
+  /**
+   * Создаёт карту в элементе svg: плитки подложки (image), слой маркеров и элементы управления.
+   * options.interactive – перетаскивание, масштаб и клавиатура; options.zoom – начальный масштаб.
+   */
+  function createTileMap(svg, options) {
+    var opts = options || {};
+    var vb = svg.viewBox.baseVal;
+    var W = vb.width;
+    var H = vb.height;
+    var box = svg.parentNode;
+    var MIN_Z = 12;
+    var MAX_Z = 17;
+    var view = { u: 0.5, v: 0.5, z: opts.zoom || 15 };
+    var tiles = {};
+    var markers = [];
+    var failed = 0;
+    var loaded = 0;
+    var drag = null;
+
+    svg.appendChild(svgEl('rect', { width: W, height: H, fill: '#DCE6EC' }));
+    var tileLayer = svgEl('g', { class: 'map__tiles' });
+    var markerLayer = svgEl('g', { id: 'map-layer' });
+    svg.appendChild(tileLayer);
+    svg.appendChild(markerLayer);
+
+    var note = el('p', 'map__note', 'Подложка карты не загрузилась. Маркеры отключений показаны на своих местах.', { role: 'status' });
+    note.hidden = true;
+    box.appendChild(note);
+    var attr = el('p', 'map__attr', 'Карта: © ');
+    attr.appendChild(el('a', null, 'участники OpenStreetMap', { href: 'https://www.openstreetmap.org/copyright', target: '_blank', rel: 'noopener' }));
+    box.appendChild(attr);
+
+    function scale() {
+      return TILE * Math.pow(2, view.z);
+    }
+
+    function clampView() {
+      view.v = Math.min(0.98, Math.max(0.02, view.v));
+    }
+
+    /** Метров в одной единице рисунка при текущем масштабе. */
+    function metersPerUnit() {
+      return 156543.03392 * Math.cos(latOf(view.v) * Math.PI / 180) / Math.pow(2, view.z);
+    }
+
+    function tileSrc(z, x, y) {
+      return TILE_URL.replace('{z}', z).replace('{x}', x).replace('{y}', y);
+    }
+
+    function drawTiles() {
+      var n = Math.pow(2, view.z);
+      var s = scale();
+      var ox = view.u * s - W / 2;
+      var oy = view.v * s - H / 2;
+      var need = {};
+      var tx;
+      var ty;
+      for (tx = Math.floor(ox / TILE); tx <= Math.floor((ox + W) / TILE); tx++) {
+        for (ty = Math.floor(oy / TILE); ty <= Math.floor((oy + H) / TILE); ty++) {
+          if (ty < 0 || ty >= n) continue;
+          var wrapX = ((tx % n) + n) % n;
+          var key = view.z + '/' + tx + '/' + ty;
+          need[key] = true;
+          var img = tiles[key];
+          if (!img) {
+            img = svgEl('image', { width: TILE + 1, height: TILE + 1, href: tileSrc(view.z, wrapX, ty), 'aria-hidden': 'true' });
+            img.addEventListener('load', function () {
+              loaded++;
+              note.hidden = true;
+            });
+            img.addEventListener('error', function (event) {
+              failed++;
+              event.target.setAttribute('visibility', 'hidden');
+              if (!loaded && failed >= 3) note.hidden = false;
+            });
+            tiles[key] = img;
+            tileLayer.appendChild(img);
+          }
+          img.setAttribute('x', Math.round(tx * TILE - ox));
+          img.setAttribute('y', Math.round(ty * TILE - oy));
+        }
+      }
+      Object.keys(tiles).forEach(function (key) {
+        if (!need[key]) {
+          tileLayer.removeChild(tiles[key]);
+          delete tiles[key];
+        }
+      });
+    }
+
+    function drawMarkers() {
+      var s = scale();
+      var mpu = metersPerUnit();
+      markers.forEach(function (m) {
+        var w = toWorld(m.lat, m.lon);
+        var x = w.u * s - (view.u * s - W / 2);
+        var y = w.v * s - (view.v * s - H / 2);
+        m.node.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
+        if (m.zone) m.zone.setAttribute('r', Math.max(20, m.radius / mpu).toFixed(1));
+      });
+    }
+
+    function redraw() {
+      clampView();
+      drawTiles();
+      drawMarkers();
+    }
+
+    function setView(lat, lon, z) {
+      var w = toWorld(lat, lon);
+      view.u = w.u;
+      view.v = w.v;
+      if (z) view.z = Math.min(MAX_Z, Math.max(MIN_Z, z));
+      redraw();
+    }
+
+    function zoomBy(step) {
+      var z = Math.min(MAX_Z, Math.max(MIN_Z, view.z + step));
+      if (z === view.z) return;
+      view.z = z;
+      redraw();
+    }
+
+    function panBy(dx, dy) {
+      var s = scale();
+      view.u -= dx / s;
+      view.v -= dy / s;
+      redraw();
+    }
+
+    /** Подбирает центр и масштаб так, чтобы все маркеры поместились с полями. */
+    function fit() {
+      if (!markers.length) return;
+      var pts = markers.map(function (m) {
+        return toWorld(m.lat, m.lon);
+      });
+      var u0 = Math.min.apply(null, pts.map(function (p) { return p.u; }));
+      var u1 = Math.max.apply(null, pts.map(function (p) { return p.u; }));
+      var v0 = Math.min.apply(null, pts.map(function (p) { return p.v; }));
+      var v1 = Math.max.apply(null, pts.map(function (p) { return p.v; }));
+      var z = MAX_Z - 1;
+      while (z > MIN_Z && ((u1 - u0) * TILE * Math.pow(2, z) > W - 120 || (v1 - v0) * TILE * Math.pow(2, z) > H - 120)) z--;
+      view.u = (u0 + u1) / 2;
+      view.v = (v0 + v1) / 2;
+      view.z = z;
+      redraw();
+    }
+
+    function panTo(id) {
+      var m = markers.filter(function (item) { return item.id === id; })[0];
+      if (!m) return;
+      var w = toWorld(m.lat, m.lon);
+      view.u = w.u;
+      view.v = w.v;
+      redraw();
+    }
+
+    /** Заменяет маркеры: {id, lat, lon, radius, color, label, pressed, onSelect} или {fixed: true} для метки без действий. */
+    function setMarkers(list) {
+      clear(markerLayer);
+      markers = list.map(function (m) {
+        var g;
+        var zone = null;
+        if (m.fixed) {
+          g = svgEl('g', { class: 'map__pin' });
+          g.appendChild(svgEl('circle', { r: 18, fill: '#274455', stroke: '#FFFFFF', 'stroke-width': 4 }));
+          g.appendChild(svgEl('circle', { r: 7, fill: '#C2DB64' }));
+        } else {
+          g = svgEl('g', {
+            class: 'map__marker',
+            role: 'button',
+            tabindex: '0',
+            'aria-pressed': m.pressed ? 'true' : 'false',
+            'aria-label': m.label
+          });
+          zone = svgEl('circle', { r: 30, fill: m.color, opacity: '0.28' });
+          g.appendChild(zone);
+          g.appendChild(svgEl('circle', { class: 'map__dot', r: 14, fill: m.color, stroke: '#FFFFFF', 'stroke-width': 4 }));
+          g.addEventListener('click', m.onSelect);
+          g.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              m.onSelect();
+            }
+          });
+        }
+        markerLayer.appendChild(g);
+        return { id: m.id, lat: m.lat, lon: m.lon, radius: m.radius || 0, node: g, zone: zone };
+      });
+      drawMarkers();
+    }
+
+    if (opts.interactive) {
+      svg.setAttribute('tabindex', '0');
+      svg.classList.add('is-interactive');
+      svg.addEventListener('pointerdown', function (event) {
+        if (event.target.closest && event.target.closest('.map__marker')) return;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        drag = { x: event.clientX, y: event.clientY };
+        svg.classList.add('is-drag');
+        if (svg.setPointerCapture) svg.setPointerCapture(event.pointerId);
+      });
+      svg.addEventListener('pointermove', function (event) {
+        if (!drag) return;
+        var k = W / svg.getBoundingClientRect().width;
+        panBy((event.clientX - drag.x) * k, (event.clientY - drag.y) * k);
+        drag.x = event.clientX;
+        drag.y = event.clientY;
+      });
+      function endDrag() {
+        drag = null;
+        svg.classList.remove('is-drag');
+      }
+      svg.addEventListener('pointerup', endDrag);
+      svg.addEventListener('pointercancel', endDrag);
+      svg.addEventListener('keydown', function (event) {
+        var step = 80;
+        var handled = true;
+        if (event.key === 'ArrowLeft') panBy(step, 0);
+        else if (event.key === 'ArrowRight') panBy(-step, 0);
+        else if (event.key === 'ArrowUp') panBy(0, step);
+        else if (event.key === 'ArrowDown') panBy(0, -step);
+        else if (event.key === '+' || event.key === '=') zoomBy(1);
+        else if (event.key === '-' || event.key === '_') zoomBy(-1);
+        else handled = false;
+        if (handled) event.preventDefault();
+      });
+
+      var ctrl = el('div', 'map__ctrl', null, { role: 'group', 'aria-label': 'Управление картой' });
+      [['+', 'Приблизить', function () { zoomBy(1); }], ['−', 'Отдалить', function () { zoomBy(-1); }], ['Все', 'Показать все отключения', fit]].forEach(function (b) {
+        var btn = el('button', 'map__btn', b[0], { type: 'button', 'aria-label': b[1] });
+        btn.addEventListener('click', b[2]);
+        ctrl.appendChild(btn);
+      });
+      box.appendChild(ctrl);
+    }
+
+    redraw();
+    return { setView: setView, setMarkers: setMarkers, fit: fit, panTo: panTo, zoomBy: zoomBy };
+  }
+
   // ---------- Страница: отключения ----------
   function pageOutages() {
     var listBox = $('#outage-list');
-    var layer = $('#map-layer');
+    var tileMap = createTileMap($('#map-svg'), { interactive: true });
     var details = $('#outage-details');
     var counter = $('#outage-count');
     var state = { service: 'all', district: 'all', selected: null };
@@ -565,9 +844,10 @@
     }
 
     /** Выбирает отключение: подсвечивает строку и маркер, выводит подробности. */
-    function select(id) {
+    function select(id, fromList) {
       state.selected = state.selected === id ? null : id;
       render();
+      if (fromList && state.selected) tileMap.panTo(state.selected);
     }
 
     /** Заполняет панель подробностей выбранного элемента. */
@@ -594,7 +874,6 @@
       var visible = all.filter(matches);
       if (state.selected && !visible.some(function (o) { return o.id === state.selected; })) state.selected = null;
       clear(listBox);
-      clear(layer);
 
       visible.forEach(function (o) {
         var pressed = state.selected === o.id ? 'true' : 'false';
@@ -608,32 +887,26 @@
         btn.appendChild(el('span', 'muted', o.address + ' · ' + fmtPeriod(o.from, o.to)));
         btn.appendChild(el('span', 'muted', 'Причина: ' + o.reason));
         btn.addEventListener('click', function () {
-          select(o.id);
+          select(o.id, true);
         });
         item.appendChild(btn);
         listBox.appendChild(item);
-
-        var color = o.type === 'emergency' ? '#B8412F' : '#F2C14E';
-        var g = svgEl('g', {
-          class: 'map__marker',
-          role: 'button',
-          tabindex: '0',
-          'aria-pressed': pressed,
-          'aria-label': TYPE[o.type] + ': ' + o.title + ', ' + o.address
-        });
-        g.appendChild(svgEl('circle', { cx: o.x, cy: o.y, r: o.r, fill: color, opacity: '0.28' }));
-        g.appendChild(svgEl('circle', { class: 'map__dot', cx: o.x, cy: o.y, r: 14, fill: color, stroke: '#FFFFFF', 'stroke-width': 4 }));
-        g.addEventListener('click', function () {
-          select(o.id);
-        });
-        g.addEventListener('keydown', function (event) {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            select(o.id);
-          }
-        });
-        layer.appendChild(g);
       });
+
+      tileMap.setMarkers(visible.map(function (o) {
+        return {
+          id: o.id,
+          lat: o.lat,
+          lon: o.lon,
+          radius: o.r,
+          color: o.type === 'emergency' ? '#B8412F' : '#F2C14E',
+          pressed: state.selected === o.id,
+          label: TYPE[o.type] + ': ' + o.title + ', ' + o.address,
+          onSelect: function () {
+            select(o.id, false);
+          }
+        };
+      }));
 
       if (!visible.length) {
         var empty = el('li', 'panel-card');
@@ -652,12 +925,14 @@
           b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
         });
         render();
+        tileMap.fit();
       });
     });
 
     loadOutages().then(function (items) {
       all = items;
       render();
+      tileMap.fit();
     }).catch(function (e) {
       showLoadError(listBox, e);
     });

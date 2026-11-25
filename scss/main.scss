@@ -1362,6 +1362,7 @@ button {
 }
 
 .map {
+  position: relative;
   overflow: hidden;
   border-radius: $r-lg;
   background: #DCE6EC;
@@ -1369,6 +1370,67 @@ button {
   svg {
     width: 100%;
     height: auto;
+  }
+
+  &__tiles {
+    filter: saturate(0.7);
+  }
+
+  svg.is-interactive {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  svg.is-drag {
+    cursor: grabbing;
+  }
+
+  &__ctrl {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    gap: 8px;
+  }
+
+  &__btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: $r-sm;
+    background: $surface;
+    color: $ink;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: $shadow-1;
+
+    &:hover {
+      background: $lime;
+    }
+  }
+
+  &__note {
+    padding: 10px 16px;
+    background: $surface;
+    font-size: $fs-md;
+    color: $muted;
+  }
+
+  &__attr {
+    padding: 0 16px;
+    background: $surface;
+    font-size: $fs-md;
+    color: $muted;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
   }
 
   &__marker {
