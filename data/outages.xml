@@ -3,30 +3,30 @@
 <outages updated="2026-11-08T14:00:00+03:00">
   <outage id="o1" type="emergency" service="water" district="central">
     <title>Нет холодной воды</title>
-    <address>ул. Примерная, 12–18</address>
+    <address>ул. Пулихова, 17–25</address>
     <period from="2026-11-08T08:40" to="2026-11-08T16:00"/>
     <reason>Повреждение магистрали</reason>
-    <map lat="53.90595" lon="27.55668" r="180"/>
+    <map lat="53.89895" lon="27.57950" r="180"/>
   </outage>
-  <outage id="o2" type="planned" service="heat" district="north">
+  <outage id="o2" type="planned" service="heat" district="central">
     <title>Отключение горячей воды</title>
-    <address>пр-т Образцовый, 5–21</address>
+    <address>пр-т Независимости, 21–29</address>
     <period from="2026-11-12T09:00" to="2026-11-14T18:00"/>
     <reason>Профилактические работы</reason>
-    <map lat="53.90238" lon="27.56913" r="150"/>
+    <map lat="53.90340" lon="27.56320" r="150"/>
   </outage>
   <outage id="o3" type="emergency" service="power" district="central">
     <title>Нет электричества</title>
-    <address>ул. Тестовая, 3–9</address>
+    <address>ул. Немига, 3–9</address>
     <period from="2026-11-08T10:15" to=""/>
     <reason>Повреждение кабеля</reason>
-    <map lat="53.90213" lon="27.54982" r="140"/>
+    <map lat="53.90520" lon="27.55330" r="140"/>
   </outage>
-  <outage id="o4" type="planned" service="heat" district="north">
+  <outage id="o4" type="planned" service="heat" district="sovetsky">
     <title>Подготовка отопления</title>
-    <address>ул. Школьная, 1–11</address>
+    <address>пр-т Независимости, 44–50</address>
     <period from="2026-11-15T09:00" to="2026-11-15T17:00"/>
     <reason>Промывка системы</reason>
-    <map lat="53.89551" lon="27.56527" r="130"/>
+    <map lat="53.90860" lon="27.57380" r="130"/>
   </outage>
 </outages>

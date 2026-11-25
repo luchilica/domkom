@@ -11,7 +11,7 @@
   var STATUS = { new: 'Принята', work: 'В работе', done: 'Выполнена', rejected: 'Отклонена' };
   var TYPE = { emergency: 'Авария', planned: 'Плановое' };
   var SERVICE = { water: 'Вода', heat: 'Тепло', power: 'Электричество' };
-  var DISTRICT = { central: 'Центральный', north: 'Северный' };
+  var DISTRICT = { central: 'Центральный', sovetsky: 'Советский' };
   var CATEGORY = {
     water: 'Водоснабжение',
     heating: 'Отопление',
@@ -531,8 +531,8 @@
     if (!svg) return;
     function build() {
       var map = createTileMap(svg, { interactive: false, zoom: 16 });
-      map.setMarkers([{ fixed: true, lat: 53.9006, lon: 27.559 }]);
-      map.setView(53.9006, 27.559, 16);
+      map.setMarkers([{ fixed: true, lat: 53.8984, lon: 27.5788 }]);
+      map.setView(53.8984, 27.5788, 16);
     }
     if ('IntersectionObserver' in window) {
       var observer = new IntersectionObserver(function (entries) {
@@ -1246,7 +1246,7 @@
       .replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
-  /** Разбирает «ул. Примерная, 12–18, кв. 3» в улицу и диапазон домов; null, если дома нет. */
+  /** Разбирает «ул. Пулихова, 19–18, кв. 3» в улицу и диапазон домов; null, если дома нет. */
   function parseAddress(text) {
     var t = String(text || '').trim();
     var m = /^(.*?),\s*(?:д\.?\s*)?(\d+)\s*(?:[–-]\s*(\d+))?/.exec(t) || /^(.*?)\s+(\d+)\s*(?:[–-]\s*(\d+))?/.exec(t);
@@ -1407,7 +1407,7 @@
       event.preventDefault();
       var value = input.value.trim();
       if (!parseAddress(value)) {
-        errorBox.textContent = 'Укажите улицу и номер дома, например: ул. Примерная, 12';
+        errorBox.textContent = 'Укажите улицу и номер дома, например: ул. Пулихова, 19';
         errorBox.hidden = false;
         input.setAttribute('aria-invalid', 'true');
         input.focus();

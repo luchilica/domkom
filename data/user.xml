@@ -5,7 +5,7 @@
   <initials>АИ</initials>
   <phone>+375 29 000-00-00</phone>
   <addresses>
-    <address id="a1" primary="true" street="ул. Примерная" house="12" flat="34">Основной</address>
-    <address id="a2" primary="false" street="пр-т Образцовый" house="7" flat="2">Родители</address>
+    <address id="a1" primary="true" street="ул. Пулихова" house="19" flat="34">Основной</address>
+    <address id="a2" primary="false" street="пр-т Независимости" house="21" flat="2">Родители</address>
   </addresses>
 </user>
