@@ -39,7 +39,14 @@ function parse(text) {
             if (text[i] === '}') depth--;
             i++;
           }
-          items.push({ raw: head + '{' + text.slice(start, i - 1).replace(/\s+/g, ' ').trim() + '}' });
+          const inner = text.slice(start, i - 1).replace(/\s+/g, ' ').trim();
+          const frames = [];
+          inner.replace(/([^{}]+)\{([^{}]*)\}/g, (m, k, body) => {
+            const decls = body.split(';').map((d) => d.trim()).filter(Boolean).map((d) => '    ' + d + ';');
+            frames.push('  ' + k.trim() + ' {\n' + decls.join('\n') + '\n  }');
+            return m;
+          });
+          items.push({ raw: head + ' {\n' + frames.join('\n\n') + '\n}' });
         } else {
           items.push({ sel: head, items: block() });
         }

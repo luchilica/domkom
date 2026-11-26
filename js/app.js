@@ -350,7 +350,7 @@
       var errors = {};
       if (!value('category')) errors.category = 'Выберите категорию проблемы';
       if (value('address').length < 5) errors.address = 'Укажите адрес: улица, дом, квартира';
-      if (!/^\+?[\d\s()\-]{9,}$/.test(value('phone'))) errors.phone = 'Введите телефон, например +375 29 000-00-00';
+      if (!/^\+?[\d\s()-]{9,}$/.test(value('phone'))) errors.phone = 'Введите телефон, например +375 29 000-00-00';
       if (value('description').length < 10) errors.description = 'Опишите проблему подробнее (не менее 10 символов)';
       if (!form.elements.consent.checked) errors.consent = 'Нужно согласие на обработку данных';
       ['category', 'address', 'phone', 'description', 'consent'].forEach(function (name) {
@@ -797,10 +797,10 @@
         drag.x = event.clientX;
         drag.y = event.clientY;
       });
-      function endDrag() {
+      var endDrag = function () {
         drag = null;
         svg.classList.remove('is-drag');
-      }
+      };
       svg.addEventListener('pointerup', endDrag);
       svg.addEventListener('pointercancel', endDrag);
       svg.addEventListener('keydown', function (event) {

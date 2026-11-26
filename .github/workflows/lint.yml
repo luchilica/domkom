@@ -24,4 +24,4 @@ jobs:
           VALIDATE_JSON: true
           VALIDATE_XML: true
           VALIDATE_YAML: true
-          FILTER_REGEX_EXCLUDE: (node_modules|build-css\.mjs)
+          FILTER_REGEX_EXCLUDE: (node_modules|build-css\.mjs|scss/)

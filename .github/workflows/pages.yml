@@ -25,7 +25,7 @@ jobs:
           mkdir _site
           cp *.html _site/
           cp -r css js assets data _site/
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
